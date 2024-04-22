@@ -1,0 +1,404 @@
+\section{Fisher's exact test}
+
+\subsection{Asymptotic test}
+
+\textbf{Question:} Is the true generating distribution \( \mathbf p\in \Delta_{rc - 1} \) really part of \( \mathcal{M}_{X \indep Y} \)?
+
+We define 
+\begin{itemize}
+  \item \( H_0 \): \( X  \indep Y\)
+  \item \( H_1 \): \( X \) and \( Y \) are no independent
+\end{itemize}
+
+\begin{defi}[Chi-Square-statistic]
+  It is defined by 
+  \begin{align*}
+    \chi^2(\mathbf u) = \sum^r_{i=1} \sum^c_{j=1} \frac{(u_{ij} - e_{ij})^2}{e_{ij}}
+  \end{align*}
+  where \( e_{ij} = \frac{u_{i+} u_{+j}}{u_{++}} \) is the expected count.
+\end{defi}
+
+\begin{remark}
+  If \( X \) and \( Y \) were independent, then we would expect \( (u_{ij} - e_{ij})^2 \) to be small.
+\end{remark}
+
+\begin{mdframed}
+  \textbf{Decision rule: }
+If \( \chi^2(\mathbf u) \) is small, we keep \( H_0 \). If \( \chi^2(\mathbf u) \) is large, we reject \( H_0 \).
+\end{mdframed}
+
+\begin{proof}[Reasoning]
+ Suppose now, \( (u_{ij} - e_{ij})^2 \) is large. What does that mean? Either, \( X \) and \( Y \) are independent, but our estimate is bad, or \( X \) and \( Y \) are dependent. Since the estimator is optimal, we infer that \( X \) and \( Y \) are dependent.
+\end{proof}
+
+
+\begin{defi}[p-value]
+  The \( p \)\textbf{-value} of the \( \chi^2 \)-test is the probability under \( H_0 \) to observe an equal or greater value of \( \chi^2 \) than the observed one \( \chi^2(\mathbf u) \).
+\end{defi}
+
+How do we compute this \( p \)-value? We can approximate it with the following theorem.
+
+\begin{thm}
+  Let \( X \in [r] \) and \( Y \in [c] \). Let \( \mathbf p \in \mathcal{M}_{X \indep Y} \subset \Delta_{rc - 1}\) be the true joint distribution. If \( \mathbf u_N \) is a contingency table with sample size \( N \), then 
+  \begin{align*}
+    \chi^2(\mathbf u_N) \overset{\text{distribution}}{\to} \chi^2_{(r-1)(c-1)}
+  \end{align*}
+  as \( N \to \infty \). We call the \( \chi^2_{(r-1)(c-1)} \) the \emph{Chi-squared distribution} with \( (r-1)(c-1) \) degrees of freedom. It is the distribution of \( \sum_{i=1}^{(r-1)(c-1)} z_i^2 \) where all \( z_i \sim \mathcal{N}(0,1) \) i.i.d. Note that this distribution does not depend on the true distribution \( \mathbf p \).
+\end{thm}
+
+Recall that convergence in distribution means 
+\begin{align*}
+  \lim_{N \to \infty} \mathbb{P}(\chi^2(\mathbf u_N) \geq t) = \mathbb{P}(\chi^2_{(r-1)(c-1)} \geq t) \quad \forall t.
+\end{align*}
+Hence, to compute the \( p \)-value, that is to compute 
+\begin{align*}
+  \mathbb{P}(\chi^2(U) \geq \chi^2(\mathbf u)),
+\end{align*}
+we can instead compute the \textbf{asymptotic \( p \)-value}
+\begin{align*}
+  \mathbb{P}(\chi^2_{(r-1)(c-1)} \geq \chi^2(\mathbf u)) .
+\end{align*}
+
+\begin{eg}[Glasses and handedness]
+  Assume \( X,Y \in \left\{ 0,1 \right\} \) and
+  \begin{align*}
+    X \,&...\, \text{wears glasses if \( X = 1 \)}, \\
+    Y \, &...\, \text{handedness if \( Y = 1 \)}.
+  \end{align*}
+  Let \( N = 100 \). Assume we have the following contingency table.
+  \begin{table}[H]
+    \centering
+    \begin{tabular}{l|ll|ll}
+    $X \ Y$ & right & left & $\mathbf u_{\cdot +}$  \\ \cline{1-4}
+       glasses     & 43    & 9    & 52             \\
+        no glasses    & 44    & 4    & 48             \\ \cline{1-4}
+       \( \mathbf u_{+ \cdot} \)     & \( 87 \)    & \( 13 \)   &       \( 100 \)        
+    \end{tabular}
+  \end{table}
+  We assert \( H_0: p \in \mathcal{M}_{X \indep Y} \) and \( H_1 : p \notin \mathcal{M}_{X \indep Y} \). Can we reject \( H_0 \)? Let's say our confidence interval is \( 1 - 0.05 = 95\% \).
+
+  We compute the expected counts.
+  \begin{align*}
+    \hat p_{11} &= \frac{52 \cdot 87}{100 \cdot 100}\\
+    \hat e_{11} &= \frac{52 \cdot 87}{100} = 45.24 \\
+    \hat e_{12} &= \frac{52 \cdot 13}{100} = 6.76 \\
+    \hat e_{21} &= \frac{48 \cdot 13}{100} = 41.76 \\
+    \hat e_{22} &= \frac{48 \cdot 13}{100} = 6.24 \\
+  \end{align*}
+  Then 
+  \begin{align*}
+    \chi^2(\mathbf u) = \frac{(45.24 - 43)^2}{45.24} + \frac{(6.76 - 9)^2}{6.76} + \frac{(41.76 - 44)^2}{41.76} + \frac{(6.24 - 4)^2}{6.24} \approx 1.7774.
+  \end{align*}
+  Is this a high or a low \( \chi^2 \) value? To answer this we compute the asymptotic \( p \)-value
+  \begin{align*}
+    \mathbb{P}(\chi_{1}^2 \geq 1.7774) \approx 0.1825 > 0.05.
+  \end{align*}
+  We do not reject \( H_0 \), in other words handedness and wearing glasses are independent.
+\end{eg}
+
+\textbf{Problem:} Can we trust this asymptotic approximation? What if \( N \) is small? 
+
+The rescue is Fisher's exact test (1934).
+
+\subsection{Independence model}
+
+Let \( X \in [r] \) and \( Y \in [c] \). Assume \( \mathbf p \in \Delta_{rc - 1} \) is the joint distribution of \( X \) and \( Y \).
+Consider a set of tables of size \( N \)
+\begin{align*}
+  T(N) = \left\{ \mathbf u \in \mathbb{N}^{r \times c} \mid u_{++} = N \right\}.
+\end{align*}
+Let \( U \in T(N) \) be a random variable. 
+
+\textbf{Question:} What is the probability of observing a contingency table \( \mathbf u \)?
+\begin{prop}
+  It holds \( U \sim \mathrm{Multinomial}(N,\mathbf p) \), i.e.
+  \begin{align*}
+    \mathbb{P}(U = \mathbf u) = {N \choose u_{11}u_{12}...u_{rc}} \prod^r_{i=1} \prod^c_{j=1} p_{ij}^{u_{ij}} \quad \forall \mathbf{u} \in T(N).
+  \end{align*}
+  Here \( {N \choose u_{11}u_{12}...u_{rc}} = \frac{N!}{u_{11}!u_{12}! \dots u_{rc}!} \).
+\end{prop}
+\textbf{Problem: }This distribution depends on the true joint distribution \( \mathbf p \).
+
+Fisher's idea was to restrict to tables with the same row and column sums as the observed data \( \mathbf u \). \emph{What is the probability to observe \( \mathbf u \) among all tables with the same row and column sum as \( \mathbf u \)?}
+
+\begin{defi}[Hypergeometric distribution]
+  The \textbf{hypergeometric distribution} \( X \sim \mathrm{HypGeo}(N, K, n) \) is defined as 
+  \begin{align*}
+    \mathbb{P}(X = k) = \frac{{K \choose k} {N - K \choose n - k}}{{N \choose n}}
+  \end{align*}
+  for \( \max\left\{ 0, n - (N - K) \right\} \leq k \leq
+   \min\left\{ K, n \right\} \).
+\end{defi}
+
+We specialize to the case \( r=c=2 \) before considering general \( r \) and \( c \).
+
+\begin{mdframed}
+\begin{prop}[Conditional distribution of observing a contingengy table  for the independence model]
+  Let \( r = c= 2 \) and \( \mathbf{p} \in \mathcal{M}_{X \indep Y} \). Assume \( \mathbf{u} \in T(N) \). Then 
+  \begin{align*}
+    \left(U \mid U_{1+} = \mathbf{u}_{1+}, U_{+1} = \mathbf{u}_{+1}\right) \sim \mathrm{HypGeo}(N, \mathbf{u}_{1+}, \mathbf{u}_{+1}).
+  \end{align*}
+  That means 
+  \begin{align*}
+    \mathbb{P}(U_{11} = u_{11} \mid U_{1+} = \mathbf{u}_{1+}, U_{+1} = \mathbf{u}_{1+}) = \frac{{\mathbf{u}_{1+} \choose u_{11}} {N - \mathbf{u}_{1+} \choose \mathbf u_{+1} - u_{11}}}{{N \choose \mathbf{u}_{+1}}}.
+  \end{align*}
+\end{prop}
+\end{mdframed}
+
+\begin{remark}
+  Note that \( U_{11} = u_{11} \) given \( U_{1+} = \mathbf{u}_{1+}, U_{+1} = \mathbf{u}_{1+} \) uniquely determines the contingency table since \( \mathbf{u}_{2+} = N - \mathbf{u}_{1+} \) and \( \mathbf{u}_{+2} = N - \mathbf{u}_{+1} \).
+\end{remark}
+
+\begin{remark}
+  Note that this conditional distribution \(  \mathrm{HypGeo}(N, \mathbf{u}_{1+}, \mathbf{u}_{+1}) \) does not depend on \( \mathbf{p} \).
+\end{remark}
+
+\clearpage
+\begin{mdframed}
+\begin{defi}[Conditional exact \( p \)-value of observing a contingency table]
+  The \textbf{conditional exact \( p \)-value} is defined as 
+  \begin{align*}
+    \mathbb{P}(\chi^2(U) \geq\chi^2(u) \mid U_{1+} = \mathbf{u}_{1+}, U_{+1} = \mathbf{u}_{+1}).
+  \end{align*}
+\end{defi}
+\end{mdframed}
+
+\begin{eg}[The tea test]
+  Assume \( X,Y \in \left\{ \text{Milk},\text{Tea} \right\} \) and
+  \begin{align*}
+    X \,&...\, \text{ingredient added first (ground truth)}, \\
+    Y \, &...\, \text{ingredient added first according to colleague}.
+  \end{align*}
+  \begin{table}[H]
+    \centering
+    \begin{tabular}{l|ll|ll}
+    $X \ Y$ & Milk & Tea & $\mathbf u_{\cdot +}$  \\ \cline{1-4}
+       Milk     & 3    & 1    & 4             \\
+        Tea    & 1    & 3    & 4             \\ \cline{1-4}
+       \( \mathbf u_{+ \cdot} \)     & \( 4 \)    & \( 4 \)   &       \( 8 \)        
+    \end{tabular}
+  \end{table}
+  As usual \( H_0: \mathbf{p} \in \mathcal{M}_{X \indep Y} \). If \( H_0 \) is true, then the colleague is just guessing.
+
+  Computation of the expected count yields \( \mathbf e = \begin{bmatrix}
+    2 & 2 \\ 2 & 2
+  \end{bmatrix} \). Then, 
+  \begin{align*}
+    \chi^2(\mathbf u) = \frac{(3-2)^2}{2} + \frac{(1-2)^2}{2} + \frac{(1-2)^2}{2} + \frac{(3-2)^2}{2} = 2.
+  \end{align*}
+  Now we want to compute \( \mathbb{P}(\chi^2(U) \geq 2 \mid U_{1+} = 4, U_{+1} = 4) \). For \( u_{11} = 0 \) we obtain 
+  \begin{align*}
+    \mathbb{P}(U_{11} = 0 \mid  U_{1+} = 4, U_{+1} = 4) = \frac{{4 \choose 0} {4 \choose 4}}{{8 \choose 4}} = \frac{1}{70} \approx 0.014.
+  \end{align*}
+  Moreover, 
+  \begin{align*}
+    \chi^2(\mathbf u) = \frac{(0-2)^2}{2} + \frac{(4-2)^2}{2} + \frac{(4-2)^2}{2} + \frac{(0-2)^2}{2} = 8.
+  \end{align*}
+  Further computation of \( u_{11} \in \left\{ 1,2,3,4 \right\} \)
+  gives 
+  \begin{table}[H]
+    \centering
+    \begin{tabular}{l|ll}
+    $u_{11}$ & \( \mathbb{P}(U_{11} = u_{11}) \) & \( \chi^2(\mathbf u) \) \\ \hline
+    0        & 0.014 & 8    \\
+    1        & 0.229 & 2    \\
+    2        & 0.514 & 0    \\
+    3        & 0.229 & 2    \\
+    4        & 0.014 & 8   
+    \end{tabular}
+    \end{table}
+  Hence, 
+  \begin{align*}
+    \mathbb{P}(\chi^2(U) \geq 2 \mid  U_{1+} = 4, U_{+1} = 4) = 0.486.
+  \end{align*}
+\end{eg}
+
+We generalize to arbitrary \( r,c \in \mathbb{N} \).
+
+\begin{defi}[Multivariate hypergeometric distribution]
+  Let \( \mathbf{X} =(X_i)_{i=1,\dots, k} \) be a random vector. Let \( M_1, \dots, M_k, M, n \in \mathbb{N} \) such that \( n \leq M = \sum_{i=1}^k M_i \). Then \( \mathbf{X} \sim \mathrm{MultiHypGeom}(M_1, \dots, M_k, n) \) if the probability mass function is 
+  \begin{align*}
+    p_\mathbf X(\mathbf{x}) = p_\mathbf X(x_1, \dots, x_k) = \frac{\prod^k_{i=1} {M_i \choose x_i}}{{M \choose n}},  \quad \forall  \mathbf x \in \mathbb{N}^k: \sum_{i=1}^k  x_i = n.
+  \end{align*}
+  \( M_i \) denotes the subpopulation of class \( i \). The total population is \( M = \sum^k_{i=1} M_i \).
+\end{defi}
+
+\begin{remark}
+  Note that \( \sum_{i=1}^k {M_i \choose x_i} = {M \choose n} \).
+\end{remark}
+
+\begin{prop}[How many ways exist to obtain a column of a contingengy table?]
+  Let \( j \in [c] \). Let \(  u_{+j} \) be fixed. The number of ways of obtaining columns with counts \( \begin{bmatrix}
+    u_{1j} & u_{2j} & \dots & u_{rj}
+  \end{bmatrix}^T \) 
+  is 
+  \begin{align*}
+    {u_{+j} \choose u_{1j}u_{2j} \dots u_{rj}}.
+  \end{align*}
+  Moreover, the number of ways of ordering the class sizes is 
+  \begin{align*}
+    {N \choose u_{1+} u_{2+} ... u_{r+}}.
+  \end{align*}
+\end{prop}
+
+\begin{mdframed}  
+\begin{thm}[Conditional distribution of observing contingency table for the independence model (general case)]
+  Let \( \mathbf p \in \mathcal{M}_{X \indep Y} \). Fix some data \( \mathbf{u} \in T(N) \). Given marginal counts \( u_{+\cdot} \) and \( u_{\cdot +} \), it holds 
+  \begin{align*}
+    \mathbb{P}(U = \mathbf u \mid U_{+\cdot} = u_{+ \cdot}, U_{\cdot+} = u_{\cdot +}) = \frac{{u_{+1} \choose u_{11}u_{21} \dots u_{r1}} \dots {u_{+c} \choose u_{1c}u_{2c} \dots u_{rc}}}{{N \choose u_{1+}\dots u_{r+}}}.
+  \end{align*}
+  Using a more compact notation we write 
+  \begin{align*}
+    \mathbb{P}(U = \mathbf u \mid U_{+\cdot} = u_{+ \cdot}, U_{\cdot+} = u_{\cdot +}) = \frac{{u_{+1} \choose \mathbf{u}_{\cdot 1}} \dots {u_{+c} \choose \mathbf{u}_{\cdot c}}}{{N \choose \mathbf{u}_{\cdot +}}}.
+  \end{align*}
+\end{thm}
+\end{mdframed}
+
+\begin{mdframed}  
+\begin{defi}[Exact \( p \)-value]
+  The exact \( p \)-value is defined as
+  \begin{align*}
+    \mathbb{P}(\chi^2(U) \geq \chi^2(\mathbf u) \mid U_{\cdot +} = u_{\cdot +}, U_{+\cdot} = u_{+ \cdot}).
+  \end{align*}
+\end{defi}
+\end{mdframed}
+
+\begin{prop}[Explicit formula for the exact \( p \)-value]
+  The explicit formula for the exact \( p \)-value is 
+  \begin{align*}
+    \mathbb{P}(\chi^2(U) \geq \chi^2(\mathbf u) \mid U_{\cdot +} = u_{\cdot +}, U_{+\cdot} = u_{+ \cdot}) = \frac{\sum_{\mathbf v} \left(\mathbbm{1}_{\chi^2(\mathbf v) \geq \chi^2(\mathbf u)} \cdot \frac{1}{\prod^r_{i=1} \prod^c_{j=1} v_{ij}!}\right)}{\sum_{\mathbf v} \frac{1}{\prod^r_{i=1} \prod^c_{j=1} v_{ij}!}},
+  \end{align*}
+  where we sum \( \mathbf{v} \) over \( T(\mathbf u_{\cdot+}, \mathbf u_{+\cdot}) = \left\{ \mathbf w \in T(N) \mid \mathbf{w}_{\cdot+} = \mathbf{u}_{\cdot +}, \mathbf{w}_{+\cdot} = \mathbf{u}_{+\cdot} \right\} \).
+\end{prop}
+
+% \begin{proof}
+%   Start with 
+%   \begin{align*}
+%     &\mathbb{P}(\chi^2(U) \geq \chi^2(\mathbf u) \mid U_{\cdot +} = u_{\cdot +}, U_{+\cdot} = u_{+ \cdot}) \\
+%     &= \sum_{\mathbf{v} \in T(\mathbf u_{\cdot+}, \mathbf u_{+\cdot})} \mathbbm{1}_{\chi^2(\mathbf{v}) \geq \chi^2(\mathbf{u})} \cdot \mathbb{P}(U = \mathbf v \mid U_{+\cdot} = u_{+ \cdot}, U_{\cdot+} = u_{\cdot +})
+%   \end{align*}
+%   We have 
+%   \begin{align*}
+%     \mathbb{P}(U = \mathbf v \mid U_{+\cdot} = u_{+ \cdot}, U_{\cdot+} = u_{\cdot +}) 
+%     = \frac{{u_{+1} \choose \mathbf{v}_{\cdot 1}} \dots {u_{+c} \choose \mathbf{v}_{\cdot c}}}{{N \choose \mathbf{u}_{\cdot +}}}
+%      = \frac{}{\sum }.
+%   \end{align*}
+% \end{proof}
+
+\subsection{Log-affine linear models}
+
+We generalize to log-affine linear models \( \mathcal{M}_{A, \mathbf{h}} \subset \Delta_{r-1} \). Assume we collect data \( X^{(1)}, \dots, X^{(n)} \in [r] \) i.i.d. according to some \( \mathbf{p} \in \mathrm{int}(\mathcal{M}_{A, \mathbf{h}}) \). We want to test 
+\begin{align*}
+  H_0: \mathbf{p} \in \mathcal{M}_{A, \mathbf{h}} \quad \text{versus} \quad H_1: \mathbf{p} \notin \mathcal{M}_{A, \mathbf{h}}.
+\end{align*}
+If the true distribution is indeed in \( \mathcal{M}_{A, \mathbf{h}} \), then we can write 
+\begin{align*}
+  \mathbf{p}_j = \frac{1}{Z(\theta)} h_j \theta^{\mathbf{a}_{\cdot j}}
+\end{align*}
+for some positive vector \( \mathbf{h} \in \mathbb{R}^r \), \( \theta = (\theta_1, \dots, \theta_k) \) and \( A \in \mathbb{Z}^{k \times r} \). The probability of observing a contingency table \( \mathbf{u} \) is given by 
+\begin{align*}
+  L(\mathbf u \mid \theta) = \frac{1}{Z(\theta)^n} {n \choose \mathbf{u}} \mathbf h^{\mathbf{u}} \theta^{A \mathbf{u}}.
+\end{align*}
+We define the fiber of a table \( \mathbf u \) to be the set of all tables \( \mathbf v \) that have the same sufficient statistic as \( \mathbf{u} \).
+\begin{defi}[Fiber of a contingency table]
+  Let \( \mathbf{u} \in \mathbb{N}^r \). The \textbf{fiber} is defined as 
+  \( \mathcal{F}(\mathbf{u}) = \left\{ \mathbf{v} \in \mathbb{N}^r \mid A \mathbf{v} = A \mathbf{u} \right\} \).
+\end{defi}
+\begin{prop}[Conditional probability is independent on \( \theta \)]
+  We have \(   L(\mathbf{v} \mid \mathbf{v} \in \mathcal{F}(\mathbf{u}), \theta) = \mathbb{P}(U = \mathbf{v} \mid v \in \mathcal{F}(\mathbf{u}))\).
+\end{prop}
+\begin{proof}
+  The key idea is that the conditional probability \( L(\mathbf v \mid v \in \mathcal{F}(\mathbf{u}), \theta) \) does not depend on \( \theta \) since we have 
+\begin{align*}
+  L(\mathbf{v} \mid \mathbf{v} \in \mathcal{F}(\mathbf{u}), \theta) &= \frac{Z(\theta)^{-n} {n \choose \mathbf{v}} \mathbf{h}^{\mathbf{v}}  \theta^{A \mathbf{v}}}{\sum_{\mathbf{w} \in \mathcal{F}(\mathbf{u})} Z(\theta)^{-n} {n \choose \mathbf{w}} \mathbf{h}^{\mathbf{w}} \theta^{A \mathbf{w}}} \\
+  &= \frac{Z(\theta)^{-n} {n \choose \mathbf{v}} \mathbf{h}^{\mathbf{v}}  \theta^{A \mathbf{v}}}{ \theta^{A \mathbf{v}}  Z(\theta)^{-n} \sum_{\mathbf{w} \in \mathcal{F}(\mathbf{u})} {n \choose \mathbf{w}} \mathbf{h}^{\mathbf{w}}} \\
+  &= \frac{ {n \choose \mathbf{v}} \mathbf{h}^{\mathbf{v}}}{  \sum_{\mathbf{w} \in \mathcal{F}(\mathbf{u})} {n \choose \mathbf{w}} \mathbf{h}^{\mathbf{w}}}
+\end{align*}
+Hence, we have \(   L(\mathbf{v} \mid \mathbf{v} \in \mathcal{F}(\mathbf{u}), \theta) = \mathbb{P}(U = \mathbf{v} \mid v \in \mathcal{F}(\mathbf{u}))\).
+\end{proof}
+
+\begin{cor}
+  If we have a log-linear model, then we have 
+  \begin{align*}
+    \mathbb{P}(U = \mathbf{v} \mid \mathbf{v} \in \mathcal{F}(\mathbf{u})) \propto {N \choose \mathbf{v}} \propto \frac{1}{\prod^r_{i=1} v_i!}.
+  \end{align*}
+\end{cor}
+
+\begin{defi}[Exact conditional \( p \)-value]
+  The exact conditional \( p \)-value is defined as 
+  \begin{align*}
+    \frac{1}{\# \mathcal{F}(\mathbf{u})} \sum_{\mathbf{v} \in \mathcal{F}(\mathbf{u})} \mathbbm 1_{\chi^2(\mathbf{v}) \geq \chi^2(\mathbf u)} \cdot \mathbb{P}(U = \mathbf{v} \mid \mathbf{v} \in \mathcal{F}(\mathbf{u})).
+  \end{align*}
+\end{defi}
+
+\textbf{Problem:} The fiber \( \mathcal{F}(\mathbf{u}) \) is too big to enumerate.
+
+\textbf{Solution:} Approximate the \( p \)-value by generating \( N \) random samples \( \mathbf{v_1}, \dots, \mathbf{v}_n \) from the fiber \( \mathcal{F}(\mathbf{u}) \) and computing \( \frac{1}{N} \sum_{\mathbf{v} \in \mathcal{F}(\mathbf{u})} \mathbbm 1_{\chi^2(\mathbf{v}) \geq \chi^2(\mathbf u)} \cdot \mathbb{P}(U = \mathbf{v} \mid \mathbf{v} \in \mathcal{F}(\mathbf{u})) \).
+
+\vspace*{1em}
+
+How do we sample? We use Markov bases to sample from the fiber \( \mathcal{F}(\mathbf{u}) \).
+
+\subsection{Markov bases}
+
+\begin{defi}[Markov basis]
+  Let \( A \in \mathbb{Z}^{k \times r} \) and let \( \mathrm{ker}_{\mathbb{Z}}(A) = \left\{ \mathbf{b} \in \mathbb{Z}^r \mid A \mathbf{b} = \mathbf{0} \right\} \). A finite set \( B \subset \mathrm{ker}_{\mathbb{Z}}(A)\)  is called a \textbf{Markov basis} if for all tables \( \mathbf{u} \in \mathbb{N}^r \) and \( \mathbf{v} \in \mathcal{F}(\mathbf{u}) \) there exist \( \mathbf{b}_1, \dots, \mathbf{b}_s \in \pm B \) such that 
+  \begin{itemize}
+    \item \( \mathbf{v} = \mathbf{u} + \mathbf{b}_1 + \dots + \mathbf{b}_s \) and,
+    \item \( \mathbf{u} + \mathbf{b}_1 + \dots + \mathbf{b}_t \geq \mathbf{0} \) for all \( t \leq s \).
+  \end{itemize}
+  The elements of \( B \) are called \textbf{moves}.
+\end{defi}
+
+\begin{remark}[Graphical interpretation]
+  Fix \( A \in \mathbb{Z}^{k \times r} \).
+  For every table \( \mathbf{u} \) we define a graph \( G_\mathbf u = (V,E) \) in the following way: \( V = \mathcal{F}(\mathbf{u}) \) and \( E = \left\{ (\mathbf v,\mathbf w)  \mid \mathbf v - \mathbf  w \in B' \right\} \). Then \( B \) is a Markov basis if and only if \( G_\mathbf u \) is connected for all \( \mathbf{u} \in \mathbb{N}^r \).
+\end{remark}
+
+Given a Markov basis, we can sample from the distribution of the fiber by the \emph{Metropolis-Hastings} algorithm.
+
+\begin{thm}
+  The output sequence from the Metropolis-Hastings algorithm is an ergodic Markov chain on \( \mathcal{F}(\mathbf{u}) \) with stationary distribution \( \mathbb{P}(U = \cdot \mid \cdot \in \mathcal{F}(\mathbf{u})) \).
+\end{thm}
+
+How do we compute a Markov basis?
+
+
+For log-affine linear models \( \mathcal{M}_{A, \mathbf{h}} \) we can construct the ring homomorphism 
+\begin{align*}
+  \varphi: \mathbb{R}[p_1, \dots, p_r] \to \mathbb{R}[\theta_{1}^{\pm}, \dots, \theta_{k}^{\pm}], \quad p_i \mapsto h_i \theta^{\mathbf{a}_{\cdot i}},
+\end{align*}
+whose kernel is the toric ideal \( I_{A, \mathbf{h}} \). We can always substitute \( p_i \mapsto \frac{p_i}{h_i} \) so that we can assume \( \mathbf{h} = \mathbf{1} \) without loss of generality. Then, \( I_A \) is a binomial ideal of the form \( I_A = (\mathbf{p}^{\alpha^+} - \mathbf{p}^{\alpha^-} \mid \alpha \in \mathrm{ker}_\mathbb{Z}(A)) \).
+
+\begin{thm}[Fundamental theorem of Markov bases (Diaconis, Sturmfels 1998)]
+  A finite subset \( B \subset \mathrm{ker}_{\mathbb{Z}}(A) \) is a Markov basis for \( A \in \mathbb{Z}^{k \times r} \) if and only if \( I_A = (\mathbf p^{\mathbf{b}^+} - \mathbf p^{\mathbf{b}^-} \mid \mathbf{b} \in B) \).
+\end{thm}
+
+\begin{proof}
+  We define \( I_B = (\mathbf p^{\mathbf{b}^+} - \mathbf p^{\mathbf{b}^-} \mid \mathbf{b} \in B) \).
+
+  \( \implies \): \( \supset \) is easy. For \( \subset \) let \( \mathbf{p}^{\mathbf{u}} - \mathbf{p}^{\mathbf{v}} \in I_A \). By assumption there exist \( b_1, \dots, b_s \in \pm B \) such that \( v = u + \sum^{s}_{i=0} b_i \) and \( u + \sum^{t}_{i=1} b_i \in \mathbb{N}^r \) for all \( t \leq s \). 
+  
+  Induction on \( s \). For \( s=1 \) we have \( v = u + b = u + b^+ - b^-\). Then \( v - b^+ = u - b^- \in \mathbb{N}^r \); it is in \( \mathbb{N}^r \) because \( b^+ \) and \( b^- \) have disjoint support. Then \( p^{v - b^+}(p^{b^+} - p^{b^-}) = p^{u} - p^{v} \in I_B \). 
+  
+  Assume  \( v = u + \sum^{s-1}_{i=0} b_i \) and \( u + \sum^{t}_{i=1} b_i \in \mathbb{N}^r \) for all \( t \leq s-1 \). Then \( u' = u + b_1 \in \mathbb{N}^r \); hence \( p^v - p^{u'} \in I_B \). Moreover, \( u' = u + b_1 \); so \( p^{u'} - p^{u} \in I_B \). Thus, \( p^v - p^{u} \in I_B \).
+
+  \( \impliedby \): Assume \( I_A = I_B \); hence for any \( p^{u} - p^{v} \) we have \( p^{u} - p^{v} = \sum_{l=1}^s p^{d_l}(p^{b_l^+} - p^{b_l^-}) \). Induction on \( s \).
+
+  For \( s = 1 \) we have \( p^{u} - p^v = p^d(p^{b^+} - p^{b^-}) \). Hence, \( u = d + b^+ \) and \( v = d + b^- \). Then \( u - b^+ = d = v - b^- \). Therefore, \( v = u + b  \).
+
+  Assume for \( s-1 \) the claim is true. We have \( p^{u} - p^{v} =\sum^s_{l=1} p^{d_l}(p^{b^+_l} - p^{b^-_l}) \). We see that for some \( k \in [s] \) we must have \( p^{u} = p^{d_k} p^{b_k^+} \); assume without loss of generality \( k= 1 \). Hence, \( u = d_1 + b_1^+ \) and \( p^v + p^{d_1 + b_1^-} = \sum^{s}_{l=2} p^{d_l}(p^{b_l^+}-p^{b_l^-})  \). By induction claim we have that there exists a connected path between \( v \) and \( d_1 + b_1^- \). Consider \( u = d_1+ b_1^+ = d_1 + b_1^- + b_1^+ - b_1^- = v + \sum_j b_j' + b_1 \).
+\end{proof}
+
+\begin{eg}[Independence model]
+  Consider \( \mathcal{M}_{X \indep Y} \) with \( X,Y \in [2] \). The sufficient statistic is \( T(u) = T(u_{11}, u_{12}, u_{21}, u_{22}) = (u_{1+}, u_{2+}, u_{+1}, u_{+2})  \); hence we have 
+  \begin{align*}
+    A = \begin{bmatrix}
+      1 & 1 & 0 & 0 \\
+      0 & 0 & 1 & 1 \\
+      1 & 0 & 1 & 0 \\
+      0 & 1 & 0 & 1
+    \end{bmatrix}.
+  \end{align*}
+  We know from the independence model that \( I_A = (p_{11}p_{22} - p_{12}p_{21}) = (\mathbf{p}^{(1,0,0,1)} - \mathbf{p}^{(0,1,1,0)})\). So a Markov basis is \( B = \left\{ (1,-1,-1,1) \right\} \).
+\end{eg}

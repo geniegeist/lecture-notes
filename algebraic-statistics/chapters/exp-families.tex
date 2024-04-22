@@ -1,0 +1,521 @@
+\section{Exponential families}
+
+\begin{defi}[Exponential family]
+  A statistical model \( \mathcal{M} = \left\{ p_\theta \right\}_{\theta \in \Theta} \) on \( \mathcal{X} \) is called a \( k \)-dimensional \textbf{exponential family} if \( p \) is of the form
+  \begin{align*}
+    p_\theta(x) = h(x) \cdot \mathrm{exp}\left( \langle \eta(\theta), T(x) \rangle - B(\theta) \right) \quad \forall x \in \mathcal{X},
+  \end{align*}
+  where 
+  \begin{itemize}
+    \item \( h: \mathcal{X} \to (0, \infty) \),
+    \item \( \eta: \Theta \to \mathbb{R}^k \) is called the \emph{natural parameter},
+    \item \( T: \mathcal{X} \to \mathbb{R}^k \) is a sufficient statistic (see factorization theorem by Fisher-Neyman), 
+    \item \( B: \Theta \to \mathbb{R} \) is measurable.
+  \end{itemize}
+  The function \( B(\theta) \) is a normalizing constant; its explicit form is 
+  \begin{align*}
+    B(\theta) = \log \int_{\mathcal{X}} h(x) \cdot \mathrm{exp}\left( \langle \eta(\theta), T(x) \rangle \right) \, \mathrm{d}x.
+  \end{align*}
+\end{defi}
+
+\begin{eg}[Binomial random variable]
+  Fix \( n \in \mathbb{N} \). Let \( X \sim \mathrm{Bin}(n, \theta) \), \( \mathcal{X} = \left\{ 0,1, \dots, n \right\} \). We have 
+  \begin{align*}
+    p_\theta(x) = {n \choose x}\theta^{x} (1 - \theta)^{n - x} = {n \choose x} \mathrm{exp}\left\{ x \log(\theta) + (n- x) \log(1 - \theta) \right\}.
+  \end{align*}
+  This is a \( 2 \)-dimensional exponential family with sufficient statistic \( T(x) = (x , n-x) \) and natural parameter \( \eta(\theta) = (\log(\theta), \log( 1 - \theta)) \).
+
+  We can also write the binomial distribution as a one-dimensional exponential family
+  \begin{align*}
+    p_\theta(x) = {n \choose x} \mathrm{exp}\left\{ x \log\left( \frac{\theta}{1 - \theta} \right) + n \log(1 - \theta) \right\}
+  \end{align*}
+  with \( T(x) = x \), \( \eta(\theta) = \frac{\theta}{1 - \theta} \) and \( B(\theta) = -n \log(1 - \theta) \).
+\end{eg}
+
+\begin{defi}[Minimal exponential family]
+  A \( k \)-dimensional exponential family is called \textbf{minimal} if the sufficient statistic \( T(\mathcal X) \) does not lie on a proper affine subspace of \( \mathbb{R}^k \), i.e. there exists no \( c \in \mathbb{R} \) and \( \mathbf v \in \mathbb{R}^k \setminus \left\{ 0 \right\} \)  such that \( \langle \mathbf v, T(x) \rangle = c \) for all \( x \in \mathcal{X} \).
+\end{defi}
+
+\begin{eg}[Nonminimal binomial random variable]
+  In the previous example, the two-dimensional exponential family of the binomial random variable is not minimal since \( \langle \mathbf 1 , T(x) \rangle = n \) is a constant.
+\end{eg}
+
+\begin{prop}[Minimal implies identifiable natural parameter]
+  If an exponential family is minimal, then the natural parameter \( \eta(\theta) \) is identifiable, i.e. it is not overparametrized.
+\end{prop}
+
+\begin{proof}
+  Assume \( \langle \eta(\theta), T(x) \rangle = \langle \eta(\theta'), T(x) \rangle \). Then \( \langle \eta(\theta) - \eta(\theta'), T(x) \rangle = 0 \). Since the exponential family is minimal, we must have \( \eta(\theta) = \eta(\theta') \).
+\end{proof}
+
+\begin{eg}[Univariate normal distribution]
+  Let \( X \sim \mathcal{N}(\mu, \sigma^2) \). Define \( \mathcal{X} = \mathbb R \) and \( \theta = (\mu, \sigma^2) \in \mathbb R  \times (0, \infty )\). The density function is 
+  \begin{align*}
+    p_\theta(x) = \left( 2\pi \sigma^2 \right)^{-\frac{1}{2}} \mathrm{exp}\left\{ -\frac{1}{2\sigma^2} (x - \mu)^2 \right\} = \left( 2 \pi \sigma^2 \right)^{-\frac{1}{2}}\mathrm{exp}\left\{ -\frac{x^2}{2\sigma^2} + \frac{x\mu}{\sigma^2} - \frac{\mu^2}{2\sigma^2} \right\}.
+  \end{align*}
+  This is a two-dimensional exponential family with sufficient statistic \( T(x) = (x, -\frac{x^2}{2}) \), natural parameter \( \eta(\theta) = (\frac{\mu}{\sigma^2}, \sigma^{-2}) \) and \( B(\theta) = \frac{\mu^2}{2\sigma^2} \).
+\end{eg}
+
+\begin{prop}[Joint distribution of i.i.d. exponential family is exponential family]
+  Let \( X^{(1)}, \dots, X^{(N)} \) be random variables i.i.d. from a \( k \)-dimensional exponential family \( \mathcal{M} = \left\{ p_\theta \right\}_{\theta \in \Theta} \). Then the joint distribution of \( X^{(1)}, \dots, X^{(N)} \) is a \( k \)-dimensional exponential family with sufficient statistic \( \sum^N_{i=1}T(X^{(i)}) \).
+\end{prop}
+
+\begin{proof}
+  We have 
+  \begin{align*}
+    p_{\theta}(x^{(1)}, \dots, x^{(N)}) &= \prod^N_{i=1} p_{\theta}(x^{(i)}) = \prod^N_{i=1}h(x^{(i)}) \cdot \mathrm{exp}\left( \langle \eta(\theta), \sum^N_{i=1}T(x^{(i)}) \rangle - NB(\theta) \right).
+  \end{align*}
+\end{proof}
+
+\subsection{Canonical form}
+
+\begin{mdframed}
+We can reparametrize the exponential family in terms of natural parameters 
+\begin{align*}
+  p_\eta(x) = h(x) \cdot \mathrm{exp}\left( \langle \eta, T(x) \rangle - A(\eta) \right) \quad \forall x \in \mathcal{X}
+\end{align*}
+with log \emph{partition function} (or \emph{cumulant generating function}) 
+\begin{align*}
+  A(\eta) = \log \int_\mathcal{X} h(x) \cdot \mathrm{exp}\left( \langle \eta, T(x) \rangle \right) \, \mathrm{d}x,
+\end{align*}
+provided that the natural parameter is taken from 
+\begin{align*}
+  \eta \in N = \left\{ \eta \in \mathbb{R}^k : \int_\mathcal{X} h(x) e^{\langle \eta, T(x) \rangle} \, \mathrm{d}x < \infty \right\}.
+\end{align*}
+\end{mdframed}
+
+\begin{thm}
+  Let \( \mathcal{M} \) be a \( k \)-dimensional exponential family.  Then 
+  \begin{itemize}
+    \item \( N \) is a convex set,
+    \item \( A: N \to \mathbb R \) is convex (and strictly convex if \( \mathcal{M} \) is minimal),
+    \item the log-likelihood function \( \ell_{X}(\eta) \) is concave on \( N \)
+  \end{itemize}
+\end{thm}
+
+\begin{thm}
+  Let \( \mathcal{M} \) be a \( k \)-dimensional exponential family with sufficient statistic \( T(x) \) and log partition function \( A(\eta) \). Then 
+  \begin{align*}
+    \nabla A(\eta) = \mathbb{E}_\eta[T(X)] \quad \text{and} \quad \nabla^2 A(\eta) = \mathrm{Var}_\eta[T(X)].
+  \end{align*}
+\end{thm}
+
+\begin{cor}\label{mle-discrete-regular-exp}
+  Let \( \mathcal{M } \) be a regular exponential family with suffcient statistic \( T(X) \). Given data \( X \), the maximum likelihood estimator, if it exists, is the unique solution to the equation
+  \begin{align*}
+    \mathbb{E}_\eta[T(X)] = T(X).
+  \end{align*}
+\end{cor}
+
+\begin{proof}
+  The likelihood function is given by
+  \begin{align*}
+    p_\eta(x) = h(x) e^{\langle \eta, T(x) \rangle - A (\eta)} 
+  \end{align*}
+  Taking the log gives 
+  \begin{align*}
+    \log p_\eta(x) = \log h(x) + \langle \eta, T(x) \rangle - A(\eta).
+  \end{align*}
+  The gradient of the log-likelihood function is
+  \begin{align*}
+    \nabla_{\eta} \ell_{x}(\eta) = T(x) - \nabla A(\eta).
+  \end{align*}
+  So, the critical equation reads \( T(x) = \mathbb{E}_\eta[T(X)] \).
+\end{proof}
+
+\begin{defi}
+  
+\end{defi}
+
+\begin{eg}[Binomial random variable in canonical form]
+  We know
+  \begin{align*}
+    p_\theta(x) = {n \choose x} \mathrm{exp}\left\{ x \log\left( \frac{\theta}{1 - \theta} \right) + n \log(1 - \theta) \right\}.
+  \end{align*}
+  Substitute \( \eta = \log\left( \frac{\theta}{1 - \theta}\right) \). Then \( e^{\eta} = \frac{\theta}{ 1 - \theta} \), so \( \theta = \frac{e^\eta}{1 + e^{\eta}} \), and \( 1 - \theta = \frac{1}{1 + e^\eta} \). Therefore,
+  \begin{align*}
+    p_\eta(x) = {n \choose x} \mathrm{exp}\left\{ \eta x - A(\eta) \right\} 
+  \end{align*}
+ with \( A(\eta) = n \log \left( 1 + e^\eta \right) \).
+\end{eg}
+
+\begin{eg}[Discrete random variable]
+  Let \( X \) be a discrete random variable taking values in \( \mathcal{X} = [r] \). Define the sufficient statistic \( T: \mathcal{X} \to \mathbb N^{r - 1} \) by 
+  \begin{align*}
+    T: x \mapsto \begin{bmatrix}
+      \mathbbm 1_{\left\{ 1 \right\}} \\
+      \mathbbm 1_{\left\{ 2 \right\}} \\
+      \vdots \\
+      \mathbbm 1_{\left\{ r-1 \right\}}      
+    \end{bmatrix}.
+  \end{align*}
+  Note that \( T(x) = \mathbf 0 \) if and only if \( x = r \). Moreover, define \( h(x) = 1 \) for all \( x \in \mathcal{X} \). By formula, we have 
+  \begin{align*}
+    A(\eta) = \log (1 + \sum_{x=1}^{r-1} \mathrm{exp}\left( \eta_x  \right)),
+  \end{align*}
+  where we integrate with respect to the count measure. Hence, for all \( x \in [r-1] \) we get 
+  \begin{align*}
+    p_\eta(x) = \frac{e^{\eta_x}}{1 + \sum^{r -1}_{k=1} e^{\eta_k}},
+  \end{align*}
+  and for \( x = r \) we have 
+  \begin{align*}
+    p_\eta(x) = 1 - \sum^{r-1}_{k=1} p_\eta(k) = \frac{1}{1 + \sum^{r-1}_{k=1} e^{\eta_k}}.
+  \end{align*}
+  Since \( 1 + \sum_{x=1}^{r-1} \mathrm{exp}\left( \eta_x  \right) \) is finite for all \( \eta \in \mathbb R^{r - 1} \), the natural parameter space is \( \mathbb R^{r - 1} \). We obtain an exponential family \( \{P_\eta : \eta \in \mathbb{R}^{r-1}\} \), where the natural parameter \( \eta \) can be interpreted as the log-odds ratio; \( p_\eta \) is equal to some probability distribution \( (p_1, \dots, p_r) \) if and only if \( \eta_x = \log(\frac{p_x}{p_r}) \) for all \( x = 1,..., r-1 \). So we obtain a correspondence between the natural parameter space \( \mathbb{R}^{r-1} \) and the probability simplex \( \Delta_{r-1} \).
+\end{eg}
+
+\begin{remark}[Trace trick]
+  Let's recall the \emph{trace trick}. For any vector \( \mathbf x \) and matrix \( \mathbf A \) we have \( \mathbf x^T \mathbf A \mathbf x = \mathrm{tr}(\mathbf x^T \mathbf A \mathbf x ) \) since \(  x^T \mathbf A \mathbf x \) is a scalar. Under trace we have \( \mathbf x^T \mathbf A \mathbf x = \mathbf x \mathbf x^T \mathbf A \) and \( \mathbf x^T \mathbf A \mathbf x = \mathbf A \mathbf x \mathbf x^T \).
+\end{remark}
+
+\begin{eg}[Multivariate normal random variables]
+  Define \( \mathcal{X} = \mathbb R^m \) and \( h(x) = 1 \) for all \( x \in \mathcal{X} \). Consider the matrix 
+  \begin{align*}
+    \begin{bmatrix}
+      x_{1}^2 & x_{1}x_{2} & \cdots & x_{1}x_m \\
+      \vdots & x_{2}^2 & \cdots & x_{2}x_m \\
+      \vdots & \cdots & \ddots & \vdots \\
+      \cdots & \cdots &  & x_{m}^2
+    \end{bmatrix} \in \mathbb{R}^{m \times m}.
+  \end{align*}
+  Define a statistic \( T: \mathbb R^m \to \mathbb R^{m} \times \mathbb R^{m(m+1)/2} \) by \( \mathbf x \mapsto \begin{bmatrix}\mathbf x \\ \mathbf d \\ \mathbf o \end{bmatrix} \) where \( \mathbf d = -(x_i^2/2)_{i \in [m]} \) and
+  \begin{align*}
+    \mathbf o = -\begin{bmatrix}
+     x_1x_2 \\ \vdots \\ x_1x_m \\ x_2 x_3 \\ \vdots \\ x_{m-1}x_m
+    \end{bmatrix};
+  \end{align*}
+  the vector \( \mathbf o \) contains all the off-diagonal elements of the matrix, the vector \( \mathbf d \) contains the diagonal elements of the matrix. Hence, the dimension of \( [\mathbf d, \mathbf o] \) is \( m(m+1)/2 \).
+  
+  Given a natural parameter \( \eta \in \mathbb R^{m + m(m+1)/2} \), we write 
+  \begin{align*}
+    \eta_{[m]} \coloneqq \begin{bmatrix}
+      \eta_1 \\ \vdots \\ \eta_m
+    \end{bmatrix} \in \mathbb R^m
+    \quad \text{and} \quad
+    \eta_{[m \times m]} = \begin{bmatrix}
+      \eta_{m+1}  & ... &  \\ 
+      & \ddots & \vdots \\ 
+      & & \eta_{2m}
+    \end{bmatrix} \in \mathbb \mathrm{Symm}(m).
+  \end{align*}
+  The natural parameter space is \( N = \mathbb R^m \times \mathrm{PD}_m \). For \( \eta \in N \) we have 
+  \begin{align*}
+    A(\eta) = -\frac{1}{2}\left( \log\left( \det(\eta_{[m \times m]}) \right) - \eta_{[m]}^T\eta_{[m \times m]}^{-1}\eta_{[m]} - m \log(2 \pi) \right).
+  \end{align*}
+  So, the Lebesgue density \( p_\eta \) can be written as 
+  \begin{align*}
+    p_\eta(\mathbf x) &= \mathrm{exp}\left\{\langle \eta, T(\mathbf x) \rangle - A(\eta) \right\}\\ &= \mathrm{exp}\left\{\langle \eta, T(\mathbf x) \rangle - \frac{1}{2}\eta_{[m]}^T\eta_{[m \times m]}\eta_{[m]} \right\} \cdot \frac{1}{\sqrt{(2\pi)^m\det\left(\eta_{[m \times m]}^{-1}\right)}}.
+  \end{align*}
+  Write 
+  \begin{align*}
+    \mathrm{exp}\left\{\langle \eta, T(\mathbf x) \rangle \right\} = \mathrm{exp}\left\{ \eta_{[m]}^T\mathbf x - \frac{1}{2}\mathbf x^T\eta_{[m \times m]}\mathbf x \right\} = \mathrm{exp}\left\{  \eta_{[m]}^T\mathbf x - \frac{1}{2} \mathrm{tr}\left( \eta_{[m \times m]} \mathbf x \mathbf x^T \right)\right\}.
+  \end{align*}
+  Now substitute 
+  \begin{align*}
+    \Sigma = \eta_{[m \times m]}^{-1} \quad \text{and} \quad \mu = \Sigma \eta_{[m]}.
+  \end{align*}
+  We obtain 
+  \begin{align*}
+    \mathrm{exp}\left\{ -\frac{1}{2} (\mathbf x - \mu)^T\Sigma^{-1}(\mathbf x - \mu) \right\} &= \mathrm{exp}\left\{ -\frac{\left( 
+      \mathbf x^T \Sigma^{-1} \mathbf x - \mathbf x^T \Sigma^{-1}\mu - \mu^T \Sigma^{-1} \mathbf x +  \mu^T \Sigma^{-1} \mu 
+     \right)}{2} \right\} \\
+     &= \mathrm{exp}\left\{ 
+      \frac{-\mathbf x^T \Sigma^{-1}\mathbf x + 2 \mathbf x^T \Sigma^{-1}\mu - \mu^T \Sigma^{-1} \mu}{2}
+      \right\} \\
+      &= \mathrm{exp}\left\{
+        -\frac{1}{2}\mathbf x^T \eta_{[m \times m]}\mathbf x + \mathbf x^T \eta_{[m]} - \frac{1}{2}\eta_{[m]}^T\eta_{[m \times m]}^{-1}\eta_{[m]}
+      \right\}
+  \end{align*}
+\end{eg}
+
+\begin{defi}
+  The inverse of the covariance matrix is called the \textbf{concentration matrix} or \textbf{precision matrix}.
+\end{defi}
+
+\subsection{Discrete regular exponential families}
+
+Let \(  X \) be a discrete random variable with state space \( \mathcal{X} = [c] \). Assume it is an exponential family of order \( k \) with statistic \( T: \mathcal{X} \to \mathbb R^k \), i.e.
+\begin{mdframed}
+\begin{center}
+\textbf{Canonical form}
+\begin{align*}
+  p_\eta(x) = h(x) \cdot \mathrm{exp}\left\{ \langle \eta,T(x) \rangle - A(\eta) \right\}.
+\end{align*}
+\end{center}
+\end{mdframed}
+We can also rewrite this as
+\begin{mdframed}
+\begin{center}
+\textbf{Parametrization by rational functions in \( \theta_j \)}
+\begin{align*}
+  p_\theta(x) = \frac{1}{Z(\theta)}h_x \prod_{j=1}^k\theta_j^{t_{jx}}
+\end{align*}
+\end{center}
+\end{mdframed}
+for \( \mathbf h = [h(1), \dots, h(c)] \), \( \theta_j = \mathrm{exp}\left( \eta_j \right) \) and \( T(x)_{j} = t_{jx} \), i.e.
+\begin{align*}
+  \mathbf T= (t_{ij}) = \begin{bmatrix}
+    \vline & ... & \vline \\
+    T(1) & ... & T(c) \\
+    \vline & ... & \vline
+  \end{bmatrix} \in \mathbb R^{k \times c}.
+\end{align*}
+To normalize \( p_\theta \) to one we set \( Z(\theta) = \sum_x h_x \prod_j \theta_j^{t_{jx}} \). If all the exponents \( \mathbf T \) are integers, then we see that the discrete exponential family is parametrized by rational functions.
+
+\begin{mdframed}
+\begin{defi}[Log-affine model]
+  Let \( \mathbf A \in \mathbb{Z}^{r \times c} \) such that \( \mathbf 1 \in \mathrm{rowspan}(\mathbf A) \) and \( \mathbf h \in \mathbb R^{c}_{> 0} \). The \textbf{log-affine model} associated to \( \mathbf A \) and \( \mathbf h \) is the set of all probability distributions 
+  \begin{align*}
+    \mathcal{M}_{\mathbf A, \mathbf h} = \left\{ \mathbf p \in \mathrm{int}(\Delta_{c - 1}) : \log(\mathbf p) \in \log(\mathbf h) + \mathrm{rowspan}(\mathbf A) \right\}.
+  \end{align*}
+  If \( h = \mathbf 1 \), then \( \mathcal{M}_{\mathbf A} \) is called a \textbf{log-linear model}.
+\end{defi}
+\end{mdframed}
+
+To \( \mathbf A \) and \( \mathbf h \) we can associate a \textbf{monomial map} \( \phi^{\mathbf A, \mathbf h}: \mathbb R^r \to \mathbb R^c \) defined by the \emph{rational} map
+\begin{align*}
+   \theta \mapsto \begin{bmatrix}
+    h_1 \prod^r_{j=1}\theta_{j}^{a_{j1}} \\
+    h_2 \prod^r_{j=1}\theta_{j}^{a_{j2}} \\
+    \vdots \\
+    h_c \prod^r_{j=1}\theta_{j}^{a_{jc}}
+  \end{bmatrix} = \begin{bmatrix}
+    h_i \theta^{\mathbf a_{\cdot i}}
+  \end{bmatrix}_{i=1, \dots, c} \in \mathbb R^c.
+\end{align*}
+Equipped with the monomial map we can associate a \textbf{toric ideal} to \( \mathbf A \) and \( \mathbf h \) by 
+\begin{align*}
+  I_{\mathbf A, \mathbf h} = I\left( \phi^{\mathbf A, \mathbf h}(\mathbb R^r) \right) \subset \mathbb R[\mathbf p].
+\end{align*}
+
+\begin{mdframed}
+\begin{center}
+  Toric ideal = vanishing ideal of the image of a monomial map.
+\end{center}
+\end{mdframed}
+
+\textbf{Question:} What are the generators of the toric ideal \( I_{\mathbf A, \mathbf h} \)?
+
+It suffices to consider the case \( \mathbf h = \mathbf 1 \) since we can always divide by \( \mathbf h \) to obtain the general case; i.e. we substitute \( p_j \mapsto \frac{p_j}{h_j} \). 
+
+In case of \( I_\mathbf A \) (that is \( \mathbf h = \mathbf 1 \)) we deal with binomial ideals.
+
+\begin{mdframed}
+\begin{prop}[Toric ideals of log-linear models are binomial]
+  Let \( \mathbf A \in \mathbb Z^{r \times c} \). Then the toric ideal \( I_\mathbf A \) is a binomial ideal and 
+  \begin{align*}
+    I_\mathbf A = (\mathbf x^\alpha  - \mathbf x^\beta \mid \alpha, \beta \in \mathbb N^c \text{ with } A\alpha = A\beta).
+  \end{align*}
+  If \( \mathbf 1 \in \mathrm{rowspan}(\mathbf A) \), then the toric ideal is homogeneous.
+\end{prop}
+\end{mdframed}
+
+\begin{proof}
+  We prove something stronger: \( I_A \) is a \( k \)-linear combination of binomials \( x^\alpha - x^\beta \) with \( A\alpha = A \beta \) for \( \alpha, \beta \in \mathbb{N}^c \). The direction \( \supset \) is clear. ...
+\end{proof}
+
+\begin{eg}
+  Let \(\mathbf  A = \begin{bmatrix}
+    0 &1 & 2  \\ 2 & 1 & 0
+  \end{bmatrix} \) and \( \mathbf h = \begin{bmatrix}
+    1 & 2 & 1
+  \end{bmatrix} \) then 
+  \begin{align*}
+    p_0 \mapsto \theta_1^2, \quad p_1 \mapsto 2\theta_1\theta_2, \quad p_2 \mapsto \theta_2^2.
+  \end{align*} 
+  The toric ideal is \( I_{\mathbf{A}, \mathbf{h}} = (4p_0p_2 - p_1^2) \).
+\end{eg}
+
+\begin{eg}[Twisted cube]
+  Let \( \mathbf A = \begin{bmatrix}
+    0 & 1 & 2 & 3 \\ 3 & 2 & 1 & 0
+  \end{bmatrix} \). The toric ideal is the vanishing ideal of the parametrization of 
+  \begin{align*}
+    p_1 \mapsto \theta_2^3, \quad p_2 \mapsto \theta_1\theta_2^2,\quad p_3 \mapsto \theta_1^2\theta_2, \quad p_4 \mapsto \theta_1^3.
+  \end{align*}
+  The toric ideal is generated by three quadratic binomials 
+  \begin{align*}
+    p_1p_3 - p_2^2, p_2p_4 - p_3^2, p_1p_4 - p_2p_3.
+  \end{align*}
+\end{eg}
+
+\begin{eg}[Binomial random variable with three trials]
+  Now assume \( \mathbf h = [1,3,3,1] \). Then the toric ideal is the vanishing ideal of the parametrization of
+  \begin{align*}
+    p_1 \mapsto \theta_2^3, \quad p_2 \mapsto 3\theta_1\theta_2^2,\quad p_3 \mapsto 3\theta_1^2\theta_2, \quad p_4 \mapsto \theta_1^3.
+  \end{align*}
+  The toric ideal \( I_{\mathbf A, \mathbf h} \) is generated by three quadratic binomials 
+  \begin{align*}
+    3p_1p_3 - p_2^2, 3p_2p_4 - p_3^2, 9p_1p_4 - p_2p_3.
+  \end{align*}
+  Intersecting the toric ideal with the probability simplex yields the binomial probability distribution with three trials. To see this note that the probability distribution is given by \( p_k = {3 \choose k} \theta^{k} (1 - \theta)^{3 - k} \); setting \( \theta_1 = \theta \) and \( \theta_2 = 1 - \theta \) yields the above parametrization.
+\end{eg}
+
+\begin{eg}[Discrete independent random variables]
+  Assume we have two independent variables \( X \) and \( Y \) with state space \( \mathcal{X} = [r_1] \) and \( \mathcal{Y} = [r_2] \). We parametrize the joint distribution by 
+  \begin{align*}
+    p_{ij} = \alpha_i \beta_j.
+  \end{align*}
+  \textbf{Question:} What is the matrix \( \mathbf A \) associated to the toric ideal?
+
+  Assume \( r_1 = 3 \) and \( r_2 = 4 \). Then 
+  \begin{align*}
+    \setcounter{MaxMatrixCols}{20}
+    \mathbf A = \begin{bmatrix}
+      1 & 1 & 1 & 1& 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+      0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 0 & 0 & 0 & 0 \\
+      0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1& 1& 1 \\
+      1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+      0 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 0 \\
+      0 & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 1 & 0 \\
+      0 & 0 & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 1
+    \end{bmatrix} \in \mathbb Z^{7 \times 12}.
+  \end{align*}
+
+  \textbf{Question:} What does \( \mathbf A \) do?
+
+  Given count vector \( \mathbf u = [u_{11}, u_{12}, ..., u_{34}] \), we have that \( \mathbf A \mathbf u = \begin{bmatrix}
+    \text{row sums} \\ \text{column sums}
+  \end{bmatrix} \) computes the row and column sums of the count vector. Since \( \mathbf A \) represents a sufficient statistic, \( T(\mathbf x) \) computes the row and column sums of observed data.
+
+  \textbf{Question:} How does the toric ideal look like?
+
+  It is generated by all binomials \( \mathbf p^{\mathbf u} - \mathbf p^{\mathbf u'} \) such that \( \mathbf A \mathbf u = \mathbf A \mathbf u' \); in other words the counts \( \mathbf u \) and \( \mathbf u' \) must have the same row and column sum.
+
+  Note that \( I_\mathbf A \) equals \( I_{X \indep Y} = (p_{i_1j_1}p_{i_2j_2} - p_{i_1j_2}p_{i_2j_1}) \). \emph{The independence ideal is a toric ideal!}
+\end{eg}
+
+\begin{eg}[Complete independence model]
+  Let \( X,Y,Z \) be discrete random variables with state spaces \( \mathcal{X} = \mathcal{Y} = \mathcal{Z} = \{0, 1\} \). The associated matrix \( \mathbf A \) of the log-linear model is 
+  \begin{align*}
+    \mathbf A = \begin{bmatrix}
+    1 & 1 & 1 & 1 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 \\
+    1 & 1 & 0 & 0 & 1 & 1 & 0 & 0 \\
+    0 & 0 & 1 & 1 & 0 & 0 & 1 & 1 \\
+    1 & 0 & 1 & 0 & 1 & 0 & 1 & 0 \\
+    0 & 1 & 0 & 1 & 0 & 1 & 0 & 1
+    \end{bmatrix} \in \mathbb{Z}^{(2 + 2 + 2) \times (2^3)} = \mathbb{Z}^{6 \times 8}.
+  \end{align*}
+  It is the vanishing ideal of the following parametrization
+  \begin{gather*}
+    p_{111} = \alpha_1\beta_1\gamma_1, \quad p_{112} = \alpha_1\beta_1\gamma_2, \quad p_{121} = \alpha_1\beta_2\gamma_1, \quad p_{122} = \alpha_1\beta_2\gamma_2, \\
+  \dots
+  \end{gather*}
+  To compute the complete independence model \( \mathcal{M} = \left\{ \mathbf p \mid \log(\mathbf p) \in \mathrm{rowspan}(\mathbf A) \right\} \) we compute the toric ideal \( I_\mathbf A \). Using Macaulay2 or Singular we compute the toric ideal 
+  \begin{gather*}
+    I_\mathbf A = (p_6p_7 - p_5p_8, p_2p_7 - p_1p_8 , p_2p_3- p_1p_4,\\ p_1p_6 - p_2p_5, p_2p_8 - p_4p_6, p_3p_6 - p_2p_7, \\
+    p_4p_5 - p_2p_7, p_2p_7 - p_4p_5, p_1p_7 - p_3p_5 ).
+  \end{gather*}
+  If we label the columns of \( \mathbf A \) as follows 
+  \begin{align*}
+    \mathbf A &= 
+    \begin{bmatrix}
+      \hspace{2mm}\vline\hspace{2mm} & \hspace{4mm}\vline\hspace{4mm} & \hspace{3mm}\vline\hspace{3mm} & \hspace{2mm}\vline\hspace{2mm} & \vline & \vline & \vline & \vline \\
+      \hspace{2mm}p_{1}\hspace{2mm} & \hspace{2mm}p_{2}\hspace{2mm} & p_{3} & p_{4} & p_{5} & p_{6} & p_{7} & p_{8} \\
+      \hspace{2mm} \vline\hspace{2mm}  & \hspace{4mm}\vline\hspace{4mm} & \hspace{3mm}\vline\hspace{3mm} & \hspace{2mm}\vline\hspace{2mm} & \vline & \vline & \vline & \vline 
+    \end{bmatrix} \\
+    &=
+    \begin{bmatrix}
+      \vline & \vline & \vline & \vline & \vline & \vline & \vline & \vline \\
+      p_{111} & p_{112} & p_{121} & p_{122} & p_{211} & p_{212} & p_{221} & p_{222} \\
+      \vline  & \vline & \vline & \vline & \vline & \vline & \vline & \vline 
+    \end{bmatrix},
+  \end{align*}
+  we obtain that 
+  \begin{gather*}
+    I_\mathbf A = ( 
+      p_{21,2}p_{22,1} - p_{21,1}p_{22,2}, \; 
+      p_{11,2}p_{12,1} - p_{11,1}p_{12,2},   \;
+      p_{11,2}p_{22,1} - p_{11,1}p_{22,2},  \\
+      p_{1,11}p_{2,12} - p_{1,12}p_{2,11}, \; 
+      p_{1,12}p_{2,22} - p_{1,22}p_{2,12},   \;
+      p_{1,21}p_{2,12} - p_{1,12}p_{2,21}, \\
+      p_{112}p_{221} - p_{122}p_{211}, \; 
+      p_{211}p_{122} - p_{221}p_{112},   \;
+      p_{221}p_{111} - p_{211}p_{121},
+    ),
+  \end{gather*}
+  which is \( I_{\{1 \indep \left\{ 2,3 \right\}, 2 \indep \left\{ 1,3 \right\}, 3 \indep \left\{ 2,3 \right\}\}} \). The toric ideal is the complete independence model of three variables.
+\end{eg}
+
+\subsection{Gaussian regular exponential families}
+
+Let \( \mathbf X \sim \mathcal{N}_{m}(\mu, \Sigma) \) and \( \theta = (\mu, \Sigma) \in \mathbb{R}^m \times \mathrm{PD}_m \). The density function is
+\begin{align*}
+  p_\theta(\mathbf x) &= (2\pi)^{-\frac{m}{2}}\mathrm{det}(\Sigma)^{-\frac{1}{2}} \cdot \mathrm{exp}\left( -\frac{1}{2} (\mathbf x - \mu)^T\Sigma^{-1}(\mathbf x- \mu) \right) \\
+  &\propto \mathrm{exp}\left( -\frac{1}{2}\mathbf x^T \Sigma^{-1}\mathbf x + \mathbf x^T \Sigma^{-1}\mu - \frac{1}{2}\mu^T\Sigma^{-1}\mu \right) \\
+  &\propto \mathrm{exp}\left( -\frac{1}{2}\mathbf x^T \Sigma^{-1}\mathbf x + \mathbf x^T \Sigma^{-1}\mu  \right) \\
+  &= \mathrm{exp}\left( \langle \Sigma^{-1},-\frac{1}{2} \mathbf x \mathbf x^T \rangle + \langle \Sigma^{-1}\mu, \mathbf x \rangle \right).
+\end{align*}
+We get the following \emph{sufficient statistic}, \emph{natural parameter} and \emph{natural parameter space}: 
+\begin{align*}
+  T(\mathbf x) = \begin{bmatrix}
+    \mathbf x \\ -\frac{1}{2}\mathbf x \mathbf x^T
+  \end{bmatrix} \quad \text{ and } \quad 
+  \eta = \begin{bmatrix}
+    \Sigma^{-1}\mu \\ \Sigma^{-1}
+  \end{bmatrix} \in N = \mathbb{R}^m \times \mathrm{PD}_m.
+\end{align*}
+
+
+We now consider submodels of the Gaussian model: we explore the natural parameter space \( N' = L \cap (\mathbb{R}^m \times \mathrm{PD}_m) \), where \( L \) is a linear subspace. In applications \( L = L_1 \times L_2 \) where \( L_1 \subset \mathbb{R}^m \) and \( L_2 \subset \mathrm{PD}_m \) are linear subspaces; often, \( L_1 = \left\{ \mathbf 0 \right\} \) or \( L_1 = \mathbb R^m \). The associated vanishing ideal lives in \( \mathbb R[\mu_i, \sigma_{ij} \mid 1 \leq i \leq j \leq m] \).
+\begin{itemize}
+  \item If \( L_1 = \left\{ \mathbf 0 \right\} \), then the vanishing ideal is of the form \( I = (\mu_1, \dots, \mu_m) + I' \) for \( I' \subset \mathbb{R}[\sigma_{ij}] \) since \( \mu = \mathbf 0 \).
+  \item If \( L_1 = \mathbb R^m \), then there is no restriction on \( \mu \); hence \( I \) only depends on \( \sigma_{ij} \).
+\end{itemize}
+In either case we can focus on the vanishing ideal associated to \( L_2 \).
+
+\begin{defi}[Inverse linear space]
+  Let \( L \subset \mathbb{R}^{\frac{(m+1)m}{2}} \) be a linear space such that \( L \cap \mathrm{PD}_m \neq \emptyset \). The \textbf{inverse linear space} is the set of all positive definite matrices 
+  \begin{align*}
+    L^{-1} = \left\{ K^{-1} \mid K \in L \cap \mathrm{PD}_m \right\}.
+  \end{align*}
+\end{defi}
+
+\begin{defi}[Gaussian linear concentration model]
+  The \textbf{Gaussian linear concentration model} defined by \( L \) consists of all distributions \( \mathcal{N}_m(\cdot, \Sigma) \) such that \( \Sigma \in L^{-1} \), i.e. \( \Sigma^{-1} \in L \). In other words, the concentration matrix \( K = \Sigma^{-1} \) is in \( L \).
+\end{defi}
+
+We can derive a special meaning if \( L \) constraints some off-diagonal elements \( K_{ij} \) to zero. It corresponds to saturated conditional independence statements.
+
+\begin{prop}[Concentration model and conditional independence]
+  Let \(  K = (K_{ij}) \) be a concentration matrix of a multivariate random normal vector. For \( i \neq j \in [m] \), we have 
+  \begin{align*}
+    K_{ij} = 0 \iff X_i \indep X_j \mid X_{[m] \setminus \left\{ i,j \right\}}.
+  \end{align*}
+\end{prop}
+
+\begin{proof}
+  We have 
+  \begin{align*}
+    K = \Sigma^{-1} = \frac{1}{\mathrm{det}(\Sigma)} \mathrm{adj}(\Sigma),
+  \end{align*}
+  where the adjugate is given by \( \mathrm{adj}(\Sigma)_{ij} = (-1)^{i + j} \mathrm{det}(\tilde \Sigma_{ji}) \) and 
+  \begin{align*}
+    \tilde \Sigma_{ji} = \Sigma_{[m] \setminus \left\{ j\right\}, [m] \setminus \left\{ i \right\}} = \Sigma_{\mathcal{C} \cup \left\{ i \right\}, \mathcal{C} \cup \left\{ j \right\}}
+  \end{align*}
+  for \( {C} = [m] \setminus \left\{ i,k \right\} \). Thus, 
+  \begin{align*}
+    k_{ij} = 0 \iff \mathrm{det}( \Sigma_{{C} \cup \left\{ i \right\}, \mathcal{C} \cup \left\{ j \right\}}) =0 \iff X_i \indep X_j \mid X_{
+  {C}
+    }.
+  \end{align*}
+  The last equivalence follows from \( A \indep B \mid C \) if and only if \( \mathrm{rank}(\Sigma_{A \cup C, B \cup C}) = \# C \) if and only if every \( (\# C + 1) \times( \# C + 1) \) minor of \( \Sigma_{A \cup C, B \cup C} \) vanishes.
+\end{proof}
+
+\begin{eg}[Gaussian independence model]
+  Consider the Gaussian exponential family with \( m = 3 \) random variables and 
+  \begin{align*}
+    L = \left\{ K \in \mathrm{PD}_3 \mid k_{12} = k_{13} = 0 \right\}.
+  \end{align*}
+  This means that \( 1 \indep 2 \mid 3 \) and \( 1 \indep 3 \mid 2 \). The intersection axiom implies that \( 1 \indep \left\{ 2,3 \right\} \). If we look at the conditional independence ideal 
+  \begin{align*}
+    I_{\mathcal{C}}  \cap \mathrm{PD}_3 = (\sigma_{12}\sigma_{33} - \sigma_{13}\sigma_{23}, \sigma_{13}\sigma_{22} - \sigma_{12}\sigma_{23}) \cap \mathrm{PD}_3,
+  \end{align*}
+  the intersection axiom is not immediately visible; do we know that \( \sigma_{1,2}  \) and \( \sigma_{1,3} \) are in \( I_\mathcal{C} \cap \mathrm{PD}_3 \)?
+  \begin{itemize}
+    \item We could use primary decomposition and extract the component that is in \( \mathrm{PD}_3 \).
+    \item We could use the parametrization of the Gaussian exponential family and compute the vanishing ideal of that parametrization. If we do this, then we see that the vanishing ideal is generated by \( \sigma_{12} \) and \( \sigma_{13} \).
+  \end{itemize}
+\end{eg}

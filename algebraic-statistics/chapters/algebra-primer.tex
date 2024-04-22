@@ -1,0 +1,376 @@
+
+\section{Algebra Primer}
+
+Here \( \mathbb{N} = \left\{ 0,1,2,3, ... \right\} \).
+
+\begin{defi}[Monomial]
+  An expression of the form \(  \mathbf x^{\mathbf u} = x_1^{u_1} x_2^{u_2} \dots x_n^{u_n} \) is called a \textbf{monomial} where \( \mathbf u \in \mathbb N^n \).
+\end{defi}
+
+\begin{defi}[Variety]
+  Let \( S \subset k[\mathbf x] \) be a subset of polynomials. The \textbf{variety} of \( S \) is defined as
+  \begin{align*}
+    V(S) = \left\{ \mathbf a \in k \mid f(\mathbf a) = 0, \; \forall f \in S \right\}
+  \end{align*}
+\end{defi}
+
+\begin{defi}[Vanishing ideal]
+  Let \( W \subset k^n \). We define
+  \begin{align*}
+    I(W) = \left\{ f \in k[\mathbf x] \mid f(\mathbf w) = 0 \; \forall \mathbf w \in W \right\}.
+  \end{align*}
+\end{defi}
+
+In algebraic statistics we often encounter varieties presented as \emph{\textbf{parametric sets}}
+\begin{align*}
+  V(S) = \left\{ \phi(t) : t \in k^d \right\} = \phi(k^d).
+\end{align*}
+
+\begin{eg}[Twisted cube]
+  Consider \( \phi: \mathbb{C} \to \mathbb{C}^3: t \mapsto (t,t^2,t^3) \). We have 
+  \begin{align*}
+    V(\left\{ x^2 - y, x^3 - z \right\}) = \phi(k^d).
+  \end{align*}
+  \includegraphics*[width=0.5\textwidth]{assets/Twisted_cubic_curve.png}
+\end{eg}
+
+
+\begin{eg}[Binomial model]
+  Consider the map \( \phi: \mathbb{C} \to \mathbb{C}^{n+1} \) given by \( \phi_i(t) = {n \choose i} t^{i}(1 - t)^{n- i} \) or alternatively
+  \begin{align*}
+    \phi: t \mapsto \begin{bmatrix}
+      {n \choose 0} (1-t)^n \\ {n \choose 1} t (1-t)^{n-1} \\ \vdots \\ {n \choose n-1} t^{n - 1} (1 - t) \\ {n \choose n} t^n
+    \end{bmatrix}.
+  \end{align*}
+  The map \( \phi_i(t) \) computes the probability to observe \( i \)-many successes where a success occurs with probability \( t \). In other words, \( \phi(t) \) denotes the probability distribution of a binomial random variable \( X \sim \mathrm{Bin}(n,t) \).
+
+  The image \( \phi([0,1]) \) consists of all possible probability distributions of a binomial random variable; it is a curve inside the probability simplex \( \Delta_{n} \subset \mathbb R^{n + 1} \).
+
+  \begin{figure}[H]
+    \centering
+    % \tdplotsetmaincoords{60}{130}
+    % \begin{tikzpicture}[scale=2, tdplot_main_coords]
+    %   \draw[thick,->] (0,0,0) -- (2,0,0) node[anchor=north east]{$x$};
+    %   \draw[thick,->] (0,0,0) -- (0,2,0) node[anchor=north west]{$y$};
+    %   \draw[thick,->] (0,0,0) -- (0,0,2) node[anchor=south]{$z$};
+    %   \draw (1,0,0) -- (0,1,0) -- (0,0,1) -- (1,0,0);
+    % \end{tikzpicture}
+    \includegraphics*[width=0.75\textwidth]{assets/binomial_curve_on_simplex.png}
+    \caption{The red curves shows all binomial distributions in the binomial model.}
+  \end{figure}
+  The collection of all probability distributions \( \phi(t) \) for \( t \in [0,1] \) will later be called a \textbf{parametric statistical model}.
+\end{eg}
+
+\begin{thm}[Hilbert basis theorem]
+  Every ideal \( I \subset k[\mathbf x] \) is finitely generated. 
+\end{thm}
+
+\begin{remark}[Implicitization problem]
+  Given a rational map \( \phi: k^d \to k^n \), we want to find a generating set of the ideal \( I(\phi(k^d)) \). This problem is called the \textbf{implicitization problem}.
+\end{remark}
+
+
+\begin{prop}[Implicit binomial statistical model]
+  The binomial model \( \mathcal{M}_t = \left\{ \mathbf p \mid \text{\( \mathbf p \) is a binomial distribution} \right\} \) consists of points \( \mathbf x \in \mathbb{R}^{n+ 1} \) inside \( \Delta_n \) that satisfy all \( 2 \times 2 \) minors of the matrix
+  \begin{align*}
+    \begin{bmatrix}
+      \dfrac{x_0}{{n \choose 0}} & \dfrac{x_1}{{n \choose 1}} & \dfrac{x_2}{{n \choose 2}} & \dots & \dfrac{x_{n-1}}{{n \choose n-1}} \\[1.5em]
+      \dfrac{x_1}{{n \choose 1}} & \dfrac{x_2}{{n \choose 2}} & \dfrac{x_3}{{n \choose 3}} & \dots & \dfrac{x_{n}}{{n \choose n}}
+    \end{bmatrix}.
+  \end{align*}
+\end{prop}
+
+\begin{proof}
+  We will solve it later using implicitization techniques.
+\end{proof}
+
+\begin{eg}[Binomial model]
+  For \( \phi_i(t) = {2 \choose i} t^{i}(1 - t)^{2 - i} \) we have that 
+  \begin{align*}
+    I(\phi(\mathbb C)) = (x + y + z  - 1, 4xz - y^2).
+  \end{align*}
+  So the two polynomials \( x + y + z - 1 \) and \( 4xz - y^2 \) solve the implicitization problem.
+\end{eg}
+
+\begin{thm}[Nullstellensatz]
+  If \( k = \bar k \), then \( I(V(I)) = \sqrt I \) for all ideals \( I \subset k[\mathbf x] \).
+\end{thm}
+
+\begin{defi}[Zariski closure]
+  Let \( W \subset k^n \) be a subset. The set \( V(I(W)) \) is called the \textbf{Zariski closure} of \( W \). It is the smallest algebraic variety that contains \( W \).
+\end{defi}
+
+
+\subsection{Elimination}
+
+\marginnote{\small{Lec, 11/06/23}}
+
+\begin{defi}[Elimination ideal]
+Let \( I  \) be an ideal in \( k[x_1, \dots, x_n] \) and \( j \in \left\{ 1, \dots, n \right\} \). The \( j \)-th elimination ideal of \( I \) is 
+\begin{align*}
+  I_j = I \cap k[x_{j+1}, x_{j+2}, \dots, x_n] \subset k[x_{j+1}, \dots, x_n].
+\end{align*}
+\end{defi}
+
+
+\begin{prop}[Vanishing ideal of projection]
+  Let \( V \subset k^{r + s} \) be a variety. Let \( \pi: k^{r + s} \to k^{r} \) be the projection. Then, the vanishing ideal of \( \pi(V) \) is the ideal \( I(\pi(V)) = I \cap k[x_1, \dots, x_r] \).
+\end{prop}
+
+\begin{proof}
+  No proof.
+\end{proof}
+
+\begin{lemma}[Image of a variety under projection]\label{lem:image-of-variety-under-projection}
+  Let \( I_j \) be the \( j \)-th elimination ideal of \( I \subset k[x_1, \dots, x_n] \) and \( \pi_j : k^n \to k^{n - j} \). Then \(   \pi_j(V(I)) \subset V(I_j)
+  \).
+\end{lemma}
+\begin{proof}
+  Let \( (a_{j+1}, \dots, a_n) \in \pi_j(V(I)) \); hence there exists \( \mathbf{a} \) such that \( \mathbf a = (a_1, \dots, a_n) \in V(I) \). Let \( f \in I_j \subset k[x_{j+1}, \dots, x_n] \). This \( f \) is also in \( I \subset k[x_1, \dots, x_n] \). So \( f(a_1, ... , a_n) = 0 \) where \( f \in I \). Hence, \( \pi_j (V(I)) \subset V(I_j) \).
+\end{proof}
+
+\begin{lemma}\label{lem:closure-theorem-lemma}
+  If \( k = \bar k \), then \( I(\pi_j(V(I))) \subset \sqrt{I_j} \).
+\end{lemma}
+
+\begin{proof}
+  Let Hilbert's Nullstellensatz (HNS) do all the work!
+  Take some \( f \in I(\pi_j(V(I))) \subset k [x_{j+1}, \dots, n] \). It means \( f(a_{j+1}, \dots, a_n) = 0 \) for all \( a = (a_1, \dots, a_n) \in V(I) \) or in other words \( f(a_1, \dots, a_n)  = 0 \) in \( k[x_1, \dots, x_n] \) for all \( a \in V(I) \). Hence \( f \in I(V(I)) = \sqrt I \) by HNS. Hence \( f^m \in I \) for some \( m \). Hence \( f^m \) still cannot contain variables \( x_1, \dots, x_j \). Hence \( f^m \in k[x_{j+1}, \dots, x_n] = I_j \). Thus, \( f \in \sqrt{I_j} \).
+\end{proof}
+
+\begin{mdframed}
+\begin{thm}[Closure Theorem]
+If \( k = \bar k \), then \(\overline{\pi_j(V(I))} =  V(I_j)  \).
+\end{thm}
+\end{mdframed}
+
+\begin{proof}
+  Use Lemma \ref{lem:image-of-variety-under-projection}: \( \overline{\pi_j(V(I))} \subset \overline{V(I_j)} = V(I_j) \).
+
+  Use Lemma \ref{lem:closure-theorem-lemma} and applying \( V(\cdot) \) yields \( V(\sqrt I_j) = V(I_j)  \subset V(I(\pi_j(V(I))) = \overline{\pi_j(V(I))}) \).
+\end{proof}
+
+
+\begin{eg}
+Let same \( I = (xy - 1) \subset k[x,y] \). Then \( V(I) = \left\{ (x,\frac{1}{x}) \mid x \neq 0 \right\} \). Then \( \pi_1(V(I)) = k \setminus \left\{ 0 \right\} \subset k = V(I_1) \) where \( I_1 = \left\{ 0 \right\} \).
+\end{eg}
+
+\begin{eg}
+Let \( k = \mathbb{R} \). Let \( I = (x^2 + y^2) \subset \mathbb R [x,y]\). Then \( V(I) = \left\{ (0,0) \right\} \). Then \( \pi_1(V(I)) = \left\{ 0 \right\} \subset \mathbb R = V(\left\{ 0 \right\}) \) with \( I_1 = \left\{ 0 \right\} \).
+\end{eg}
+
+
+\marginnote{\small{Lec, 11/07/23}}
+
+\begin{defi}
+  A \textbf{$j$-th elimination ordering} is a term ordering where any monomial with \( x_i, i \leq j \) indeterminate appearing to any nonzero power is larger than every monomial only in \( x_i, i > j \) indeterminates.
+\end{defi}
+
+\begin{mdframed}
+\begin{thm}[Elimination Theorem]\label{thm:elimination-theorem}
+Let \( I \) be an ideal in \( k[x_1, ..., x_n] \) with Gröbner basis \( G \) with respect to a \( j \)-th elimination ordering. Then \( G_j = G \cap k[x_{j+1}, ... , x_n] \) is a Gröbner basis of \( I_j \) with respect to \( \prec \).
+\end{thm}
+\end{mdframed}
+
+\begin{proof}
+  To show that \( G_j \) is a Gröbner basis of \( I_j \) we need to show 
+  \begin{itemize}
+    \item \( G_j \subset I_j \): this follows because \( G \subset I \);
+    \item \(  \mathrm{in}_\prec(G_j) \subset \mathrm{in}_\prec (I_j) \): this is clear;
+    \item \(  \mathrm{in}_\prec(G_j) \supset \mathrm{in}_\prec (I_j) \): Let \( f \in I_j \). Then \( f \in I \). Therefore, there exist some \( g \in G \) such that \( \mathrm{in}_\prec(g)  \) divides \( \mathrm{in}_\prec(f) \). Note that \( \mathrm{in}_\prec(f) \) only contains variables \( x_{j+1}, ..., x_n \). Hence, \( \mathrm{in}_\prec(g) \) does not contain variables \( x_1, ..., x_j \). Since we have an elimination order, all the other terms of \( g \) do not contain \( x_1, ..., x_j \), as well. So \( g \in G_j \). Thus, \( f \) is generated by some element in \( \mathrm{in}_\prec(G_j) \), namely \( g \).
+  \end{itemize}
+\end{proof}
+
+\begin{cor}[Lexicographic ordering]
+An ideal \( I \subset k [x_1,...,x_n] \), \( G \) a Gröbner basis of \( I \) with respect to lex \( x_1 > x_2 > ... > x_n \) implies that \( G_j = G \cap k[x_{j+1}, ..., x_n] \) is a Gröbner basis of \( I_j \)  for all \( j = 1 , ... , n \).
+\end{cor}
+
+\begin{eg}[Compute the closed image of a variety under projection]
+  Let \( k = \mathbb{C} \).
+  Define \( f(x,y) = xy^3 - x^2 \) and \( g(x,y) = x^3y^2 - y \). Consider the ideal \( I = (f,g) \) and its variety \( V(I) \). What is \( \overline{\pi_1(V(I))} \)?
+
+  \begin{itemize}
+    \item Compute a Gröbner basis of \( I \) with respect to lexicographic ordering \( x \prec y \). We have  \( S(f,g) = y^2 - x^4 \). The standard residue is \( h (x,y) = y^2 - x^4 \). So, we add it to \( G \). Computing the \( S \)-polynomial between \( f,h \) and \( g,h \) yields: \( k = f - xy(y^2 - x^4) = x^5y - x^2 \) and\( l = g - x^3(y^2 - x^4) = x^7 - y \). Next, we need to compute the standard residue of \( k \) and \( l \). Repeating this process yields the unique reduced Gröbner basis \( G = \left\{ y - x^7, x^5y - x^2 \right\} \). Now if we plug \( x^7 = y \) into \( x^5y - x^2 \) we obtain \( G = \left\{ y - x^7, x^{12} - x^2 \right\} \).
+    \item Compute \( G_1 = \left\{ x^{12} - x^2 \right\} \).
+    \item Compute \( \overline{\pi_1(V(I))} = V(I_1) = V(G_1) = V(x^{12} - x^2) = \left\{ 0 \right\} \cup \left\{ \xi \mid \xi^{10} = 1 \right\} \subset \mathbb{C}\).
+  \end{itemize}
+\end{eg}
+
+\subsection{Implicitization}
+
+The \emph{implicitization problem} is concerned with the following problem: Find the generators of the vanishing ideal of an image of a polynomial map; more precisely, given \( \varphi: k^d \to k^r \) we want to compute the generators of \( I(\varphi(k^d)) \).
+
+\begin{eg}[Twisted cube]
+  Let \( \varphi: k \to k^3, t \mapsto (t,t^2,t^3)  \). Then \( I(\varphi(k)) = (y - x^2, z - x^3) \).
+\end{eg}
+
+\begin{eg}[Binomial model with two trials]
+  Let \( X \sim \mathrm{Bin}(2, \theta) \). Then, the probability distribution is \( \phi(\theta) = p_\theta = \begin{bmatrix}(1 - \theta)^2 & 2 \theta(1 - \theta) & \theta^2 \end{bmatrix} \) for \( \theta \in [0,1] \). What relations are satisfied by the components of \( p_\theta \)? This is answered by implicitization. We will later see that \( p_0p_2 - \frac{1}{4}p_1^2 \) holds.
+\end{eg}
+
+\begin{eg}[Warning: Image of a polynomial function need not be a variety]
+Consider \( \phi: \mathbb{C}^2 \to \mathbb{C}^2, (\theta_1, \theta_2) \mapsto (\theta_1, \theta_1\theta_2) \). Then, \( \mathrm{Im}(\phi) = \left\{ (0,0) \right\} \cup \left\{ (a,b) \in \mathbb{C}^2 \mid a \neq 0 \right\}\), which is not a variety. Note that the image is dense, i.e. \( \overline{\mathrm{Im}\phi} = \mathbb{C}^2 \). 
+\end{eg}
+
+\begin{remark}[Constructible set]
+  It can be shown that if we have \( k = \bar k \) and a polynomial function \( \phi: k^d \to k^r \), then there exist a finite sequence of varieties \( W_1 \supset W_2 \supset ... \supset W_s \) in \( k^r \) such that \( \phi({k^d}) = W_1 \setminus(W_2 \setminus ... \setminus W_s) \). This is called a \emph{constructible} set. 
+
+  In the example above, \( \phi(\mathbb{C}^2) = \mathbb{C}^2 \setminus (\{ (0,a) \mid a \in \mathbb{C} \} \setminus \left\{ (0,0) \right\}) \).
+
+  Note if \( k \neq \bar k \), then \( \phi: \mathbb{R} \to \mathbb{R}, \phi(\theta) = \theta^2 \) and \( \mathrm{Im}(\theta) = [0, \infty) \). However, it is true that \( \phi(\mathbb{R}^d) \) is always a semialgebraic set (given by polynomial inequalities).
+
+\end{remark}
+
+
+\begin{mdframed}  
+\begin{thm}[Implicitization theorem]
+Fix \( k = \bar k \). Let \( \phi = (\phi_1, \dots, \phi_r): k^d \to k^r \) be a polynomial. Define the ideal \( I = (y_1 -  \phi_1, y_2 - \phi_2,\dots, y_r - \phi_r) \subset k [x_1, ..., x_d, y_1, ..., y_r] \). Then, \( \overline{\mathrm{image}(\phi)} = V(I_d).  \)
+\end{thm}
+\end{mdframed}
+
+\begin{proof}
+  We have \(   V(I) = \left\{ (x_1,...,x_d, y_1, ..., y_r) \mid \phi(x_1,...,x_d) = (y_1,..., xy_r) \right\}
+  \).
+This is the graph of \( \phi \). Then
+\begin{align*}
+  \pi_d(V) &= \left\{ (x_1, ..., x_r) \mid \phi_1(t_1,...,t_d) = x_1, ..., \phi_r(t_1,...,t_d) = x_r \right\} \\
+  &= \left\{ (\phi_1(t_1,...,t_d), ... , \phi_r(t_1,..., t_d)) \mid (t_1,..., t_d) \in k^d \right\} = \phi(k^d).
+\end{align*}
+In words, the image of the parametrization is the projection of its graph. By closure theorem, we can compute the image of a projection by the elimination ideal; hence \( V(I_d) = \overline{\pi_d (V(I))} = \overline{\phi(k^d)} \).
+\end{proof}
+
+\begin{eg}[Binomial model with two trials]
+  Let \( X \sim B(2, \theta) \) whose distribution is parametrized by \( \phi: k \to k^3 \), \( \phi(\theta) = \begin{bmatrix}
+    (1 - \theta)^2 & 2\theta(1 - \theta) & \theta^2
+  \end{bmatrix} \). What relations are satisfied by the components of \( \phi(\theta) \)?
+
+  Define the ideal \( I = (p_0 - (1 - \theta)^2, p_1 - 2\theta(1 - \theta), p_2 - \theta^2) \subset \mathbb{C}[\theta, p_0, p_1, p_2] \). By the Implicitization theorem, we want to compute \( I \cap k[p_0,p_1,p_2] \). Using the Elimination theorem, we can compute this elimination ideal with Gröbner basis. Consider the lexicographic ordering \( y_3 \prec y_2 \prec y_1 \prec \theta \). Using Macaulay2 we obtain the reduced Gröbner basis 
+  \begin{align*}
+    G &= \left\{ 2 \theta - p_1 - 2p_2, p_0 + p_1 + p_2 - 1, p_1^2 + 4 p_1 p_2 + 4p_2^2 - 4p_2 \right\} \\
+    G_{\mathbf p} &= \left\{ p_0 + p_1 + p_2 - 1, p_1^2 + 4 p_1 p_2 + 4p_2^2 - 4p_2 \right\} 
+  \end{align*}
+  Thus, by the Elimination theorem we obtain 
+  \begin{align*}
+    V(I_1) = V(G_1) = V(p_0 + p_1 + p_2 - 1,  p_1^2 + 4 p_1 p_2 + 4p_2^2 - 4p_2).
+  \end{align*}
+  Note that the first equation implies \( -p_1 -p_2 + 1 = p_0 \) and the second implies \( p_1^2 + 4 p_1 p_2 + 4p_2^2 - 4p_2 = p_1^2 - 4p_2 (-p_1 - p_2 + 1) \); hence we plug the first into the second equation to obtain the \emph{Hardy Weinberg equations}
+  \begin{align*}
+    V( p_0 + p_1 + p_2 - 1, p_0 p_2 - \frac{1}{4}p_1^2).
+  \end{align*}
+\end{eg}
+
+\begin{eg}[General binomial model]
+  In general for \( X \sim \mathrm{Bin}(n, \theta) \) this model is parametrized by \( \phi = (\phi_0, \phi_1 , \dots, \phi_n) \), where \( \phi_i = P(X = i) = {n \choose i}\theta^{i} (1 - \theta)^{n - i} \). The implicit equations of \( \phi(k) \) are \( p_0 + p_1 + ... + p_n = 1 \) and the \( 2 \times 2 \)-minors of the Hankel matrix 
+\begin{align*}
+  \begin{bmatrix}
+    p_0 / {n \choose 0} & p_1  / {n \choose 1} & ... & p_{n-1}  / {n \choose n-1} \\
+    p_1 / {n \choose 1} & p_2  / {n \choose 2} & ... & p_{n}  / {n \choose n}
+  \end{bmatrix}
+\end{align*}
+For \( n = 2 \), we obtain \( \mathrm{det}\begin{bmatrix}
+  p_0 & p_1 / 2 \\ p_1 / 2& p_2
+\end{bmatrix} = p_0 p_2 - \frac{1}{4}p_1^2\).
+\end{eg}
+
+
+
+\subsection{Primary decomposition}
+
+\begin{defi}[Prime and reducible ideals]
+  An ideal \( I \) is \textbf{prime} if \( ab \in I \) implies that \( a \in I \) or \( b \in I \). An ideal \( I \) is called \textbf{reducible} if \( I = I_1 \cap I_2 \) for proper ideals \( I_1 , I_2 \supsetneq I  \).
+\end{defi}
+
+\begin{defi}[Reducible variety]
+  A variety \( V \) is called \textbf{reducible} if \( V' \cup V'' = V \) for proper varieties \( V, V' \subsetneq V \).
+\end{defi}
+
+\begin{prop}
+  A variety is irreducible if its associated ideal is prime.
+\end{prop}
+
+
+\begin{prop}
+  Every variety can be decomposed \emph{uniquely} into finitely many irreducible varieties: \( V = V_1 \cup ... \cup V_m \).
+\end{prop}
+
+
+\begin{prop}
+  Every ideal in a Noetherian ring can be decomposed into finitely many irreducible ideals: \( I = I_1 \cap ... \cap I_m \).
+\end{prop}
+
+\begin{defi}[Primary ideal and associated prime ideal]
+  An ideal \( I \) is called \( J \)-\textbf{primary} if \( xy \in I \) and \( x \notin I \) implies that \( y \in J \coloneqq \sqrt{I} \). We call \( J = \sqrt I \) the \textbf{associated prime} of the primary ideal \( I \).
+\end{defi}
+
+
+\begin{prop}[Some facts in a Noetherian ring]\(  \)
+  \begin{itemize}
+    \item Every prime ideal is irreducible.
+    \item Not every irreducible ideal is prime.
+    \item Every irreducible ideal is primary.
+    \item The intersection of prime ideals need not be prime (e.g. take \( (2) \) and \( (3) \)).
+    \item The intersection of \(J\)-primary ideals is \( J \)-primary.
+  \end{itemize}
+\end{prop}
+
+\begin{defi}[Primary decomposition]
+  Let \( I \subset k[x] \) be an ideal. A \textbf{primary decomposition} of \( I \) is a representation of \( I = \bigcap_{i=1}^r Q_{i} \) as an intersection of finitely many primary ideals \( Q_i \). The representation is \textbf{irredundant} if all \( \sqrt Q_i \) are distinct and no \( Q_i \supset \bigcap_{j \neq i} Q_j  \) exists.
+\end{defi}
+
+\begin{cor}
+  A primary decomposition always exists in a Noetherian ring.
+\end{cor}
+
+\begin{defi}[Associated primes]
+  Let \( I \) be decomposable such that \( I = Q_1 \cap ... \cap Q_m \) is irredundant. Then \( \sqrt Q_i \) are called the \textbf{associated primes} \( \mathrm{Ass}(I) \) of \( I \).
+\end{defi}
+
+\begin{prop}[1st uniqueness]
+  Let \( I \subset k[x] \). Then, the associated primes of \( I \) are uniquely determined by \( I \); thus the associated primes are independent of the specific primary decomposition of \( I \). In other words, different irredundant primary decomposition yield the same associated primes.
+\end{prop}
+
+\begin{prop}[2nd uniqueness]
+  The minimal ideals in \( \mathrm{Ass}(I) \) are called \textbf{minimal primes}. Primary ideals associated to the minimal ideals are uniquely determined by \( I \). In other words, 
+  \begin{align*}
+    I = \bigcap Q_i = \bigcap Q'_j, \quad \sqrt Q_k = \sqrt {Q'_{k'}} \; \text{is minimal for some \( k \in \mathbb N \)} \implies Q_k = Q_{k'}'.
+  \end{align*}
+\end{prop}
+
+\begin{prop}
+  Minimal primes are the smallest prime ideals containing \( I \).
+\end{prop}
+
+\begin{defi}
+  \textbf{Embedded primes} are associated primes that are not minimal.
+\end{defi}
+
+\begin{mdframed}
+  Associated primes are unique. \\
+  The primary ideals associated to minimal primes are unique. \\
+  The primary ideals associated to embedded primes need \emph{not} be unique.
+\end{mdframed}
+
+\begin{prop}[Irreducible composition and minimal primes]
+  The irreducible composition of a variety \( V(I) \) is the union of \( \bigcup_{i} V(P_i) \) where \( P_i \) are the minimal primes of \( I \).
+\end{prop}
+
+
+\begin{defi}[Quotient ideal and saturation]
+  Let \( I,J \) be ideals in \( K[x] \). The \textbf{quotient ideal} is the ideal \(     I : J = \left\{ f \in K[x] : fg \in I\; \forall g \in J \right\} \). The \textbf{saturation} of \( I \) by \( J \) is defined as \(     I : J^\infty = \bigcup^\infty_{k=1} I : J^k
+  \).
+\end{defi}
+
+\begin{prop}
+  We have 
+  \begin{align*}
+    I(V \setminus W) = I(V) : I(W).
+  \end{align*}
+  Moreover,
+  \begin{align*}
+    \overline{V(I) \setminus V(J)} = V(I : J^\infty).
+  \end{align*}
+\end{prop}
+
+\begin{defi}[Binomial ideal]
+  A \textbf{binomial} is a polynomial of the form \( \mathbf x^\alpha - \lambda \mathbf x^\beta \) in \( k[\mathbf x] \). A \textbf{binomial ideal} is an ideal generated by binomials.
+\end{defi}

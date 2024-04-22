@@ -1,4 +1,8 @@
-\author{Notes taken by Viet Duc Nguyen}
+\ifx \nlecturer\undefined 
+	\author{Notes taken by Viet Duc Nguyen}
+\else
+	\author{Based on lectures by \nlecturer}
+\fi
 \date{\nterm\ \nyear}
 \title{\ncourse}
 
@@ -29,8 +33,8 @@
 \usetikzlibrary{patterns}
 \usetikzlibrary{shapes}
 \usetikzlibrary{plotmarks}
+\usetikzlibrary{cd}
 
-\usepackage[]{mdframed}
 \usepackage{float}
 \usepackage{xcolor}
 \hypersetup{
@@ -43,14 +47,18 @@
 
 \makeatletter
 \let\@real@maketitle\maketitle
-\renewcommand{\maketitle}{\@real@maketitle\begin{center}\begin{minipage}[c]{0.9\textwidth}\end{minipage}\end{center}}
+\renewcommand{\maketitle}{\@real@maketitle\begin{center}\begin{minipage}[c]{0.9\textwidth}\centering\footnotesize Updated on \date{\today}
+ \\	These notes are not endorsed by the lecturer.\end{minipage}\end{center}}
 \makeatother
 
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
 
 
 \theoremstyle{definition}
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{lemma}[thm]{Lemma}
+\newtheorem*{lemma*}{Lemma}
 \newtheorem{cor}[thm]{Corollary}
 \newtheorem{prop}[thm]{Proposition}
 \newtheorem{defi}[thm]{Definition}

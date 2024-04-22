@@ -1,0 +1,344 @@
+\section{Conditional Independence}
+\marginnote{\small{Lec09, 13.11.2023}}
+
+Conditional independence constraints are simple constraints on probability densities; they express the following:
+\begin{mdframed}
+  \begin{center}
+
+  Two sets of random variables are \emph{\textbf{unrelated}} given a third set of random variables. 
+\end{center}
+\end{mdframed}  
+We assume the following
+\begin{itemize}
+  \item \( {\mathbf X} = (X_1, ..., X_m) \in  \mathcal{X} = \prod^m_{i=1} \mathcal{X}_i \) is an \( m \)-dimensional random vectors.  
+  \item \( f(\mathbf x)  \) is the density function of the joint probability distribution of \( \mathbf X \) with respect to a product measure \( \nu \) on \( \mathcal{X} \)
+  \item given \( A \subset [m] \), we write \( \mathbf X_A = (X_a)_{a \in A} \), similarly \( \mathcal{X}_A \)
+  \item given a partition \( A_1 \mid A_2 \mid ... \mid A_k \) of \( [m] \) we write \( f(x_{A_1}, ... , x_{A_k}) \) to group variables together.
+\end{itemize}
+
+
+We recall the density definitions. The \textbf{marginal density} of \( X_A \) is defined by \begin{align*}
+  f_A(x_A) = \int_{\mathcal{X}_{A^c}} f(x_A, x_{A^c}) \, \mathrm{d}\nu_{A^c}(x_{A^c}), \quad \forall x_A \in \mathcal{X}_A
+\end{align*}
+for \( A \subset [m] \). The \textbf{conditional density} is 
+\begin{align*}
+  f_{A \mid B} (x_A \mid x_B) =
+  \begin{cases}
+     \frac{f_{A \cup B} (x_A, x_B)}{f_B(x_B)} &\quad \text{if \( f_B(x_B) > 0 \)}, \\ 0 &\quad \text{otherwise}
+  \end{cases}
+\end{align*}
+given some \( x_B \in \mathcal{X}_B \) and disjoint \( A, B \subset [m] \).
+
+\begin{mdframed}
+\begin{defi}[Conditional independence of random variables]\(  \) \\
+Let \( A,B,C \subset [m] \) pairwise disjoint. We define  \( X_A \indep X_B \mid X_C \) if
+\begin{align*}
+  f_{A \cup B \mid C} (x_A,x_B \mid x_C) = f_{A \mid C} (x_A \mid x_C)\cdot f_{B \mid C} (x_B \mid x_C), \quad \forall x_A, x_B , x_C
+\end{align*}
+We say that \( X_A \) is \textbf{conditionally independent  of \( X_B \) given \( X_C \)}. We also write \( A \indep B \mid C \).
+\end{defi}
+\end{mdframed}
+
+In plain English, this means that 
+\begin{mdframed}
+  \begin{center}
+    Given \( X_C \), knowing \( X_B \) does not give any information about \( X_A \).
+  \end{center}
+\end{mdframed}
+
+\begin{prop}[In plain English]
+  If \( f_{B \mid C} (X_B \mid X_C) > 0 \), then \(   f_{A \mid B \cup C} (X_A \mid X_B, X_C) = f_{A \mid C}(X_A \mid X_C)  \).
+\end{prop}
+\begin{proof}
+  We have
+  \begin{align*}
+    f_{A \mid B \cup C} (X_A \mid X_B, X_C) &= \frac{f_{A \cup B \cup C}(X_A,X_B,X_C)}{f_{B \cup C}(X_B,X_C)} \cdot \frac{f_C(X_C)}{f_C(X_C)} \\
+    &= \frac{f_{A \cup B \mid C}(X_A,X_B\mid X_C)}{f_{B \mid C}(X_B \mid X_C)} \\ 
+    &= f_{A \mid C}(X_A \mid X_C).
+  \end{align*}
+\end{proof}
+
+
+\begin{eg}[Independence of random variables]
+  Set \( C = \emptyset \). Then 
+  \begin{align*}
+    X_A \indep X_B \mid X_\emptyset = X_A \indep X_B.
+  \end{align*}
+  This corresponds to \( f_{A \cup B}(x_A,x_B) = f_A(x_A)f_B(x_B) \).
+\end{eg}
+
+\subsection{Conditional independence axioms}
+
+We want to examine the following problem:
+\begin{mdframed}
+\begin{center}    
+  \textbf{Question:} Given a list of CI statements for some random vector \( \mathbf X \), what other CI statements are also satisfied?
+\end{center}
+\end{mdframed}
+Here, we assume that the density \( f \) is unknown. Otherwise, we can just all the CI statements from the density. \\
+
+\textbf{Idea:} Find some \emph{easy} conditional independence implications which follow directly from definition. We call these inference rules {\textbf{conditional independence axioms}} or \textbf{conditional independence inference rules}.\\
+
+Pearl (1988) proposes a list of four axioms from which he conjectured all CI relations can be deduced (something we call a \textbf{sound and complete system}). Soundness means everything stays true if deducing; completeness means everything that is true can be deduced. 
+
+\begin{prop}[Pearl's four axioms]
+   Let \( A,B,C,D \subset [m] \) be pairwise disjoint. Then, the following holds true:
+  \begin{itemize}
+    \item Symmetry: If \( X_A \indep X_B \mid X_C \) then \( X_B \indep X_A \mid X_C \);
+    \item Decomposition: \( X_A \indep X_{B \cup D} \mid X_C \implies X_A \indep X_B \mid X_C \);
+    \item Weak union: \( X_A \indep X_{B \cup D} \mid X_C \implies X_A \indep X_B \mid X_{C \cup D} \);
+    \item Contraction: \( X_A \indep X_B \mid X_{C \cup D}  \) and \( X_A \indep X_D \mid X_C \implies X_A \indep X_{B \cup D} \mid X_C \).
+  \end{itemize}
+  One says that CI is a semigraphoid. Note that these four CI axioms are valid for \emph{any} distribution.
+\end{prop}
+\begin{proof}
+\begin{itemize}
+  \item Symmetry follows easily from commutativity as we see 
+  \begin{align*}
+    f_{A \cup B \mid C}(x_A, x_B \mid x_C) &= f_{A \mid C}(x_A \mid x_C) f_{B \mid C}(x_B \mid x_C) \\
+    &=  f_{B \mid C}(x_B \mid x_C) f_{A \mid C}(x_A \mid x_C) \\
+    &= f_{B \cup A \mid C}(x_B, x_A \mid x_C).
+  \end{align*}
+
+  \item Decomposition follows from marginalizing \( x_D \). The statement \( X_A \indep X_{B \cup D} \mid X_C \) means \(  f_{A \cup B \cup D \mid C}(x_A,x_B,x_D \mid x_C) = f_{A \mid C}(x_A \mid x_C) f_{B \cup D \mid C}(x_B, x_D \mid x_C) \). Then, we marginalize (that is we integrate both sides over \( \mathcal{X}_D \)), and we get 
+  \begin{align*}
+    &\int_{\mathcal{X}_D} \frac{f_{A \cup B \cup D \cup C}(x_A, x_B, x_D, x_C)}{f_{C}(x_C)} \nu(x_D) \\ = &\int_{\mathcal{X}_D} \frac{f_{A \cup C}(x_A, x_C)}{f_{C}(x_C)}  \frac{f_{B \cup D \cup C}(x_B, x_D, x_C)}{f_{C}(x_C)} \nu(x_D).
+  \end{align*}
+  By definition of marginal density, the above equation is the same as 
+  \begin{align*}
+    \frac{f_{A \cup B \cup C}(x_A,x_B,x_C)}{f_{C}(x_C)} = \frac{f_{A \cup C}(x_A, x_C)}{f_C(x_C)}\frac{f_{B \cup C}(x_B, x_C)}{f_C(x_C)}.
+  \end{align*}
+  Hence, \( f_{A \cup B \mid C}(x_A, x_B \mid x_C) = f_{A \mid C}(x_A \mid x_C) f_{B \mid C}(x_B \mid x_C) \); thus \( X_A \indep X_B \mid X_C \).
+
+  \item Weak union follows easily from condition on \( x_D \). We take \(  f_{A \cup B \cup D \mid C}(x_A,x_B,x_D \mid x_C) = f_{A \mid C}(x_A \mid x_C) f_{B \cup D \mid C}(x_B, x_D \mid x_C) \), and divide it by \( f_{D \mid C}(x_D \mid x_C) \):
+  \begin{align*}
+    \frac{f_{A \cup B \cup C \cup D}(x_A,x_B,x_C,x_D)}{f_{C \cup D}(x_C, x_D)} = \frac{f_{A \cup C}(x_A,x_C)}{f_{C}(x_C)}\frac{f_{B \cup C \cup D}(x_B,x_C)}{f_{C \cup D}(x_C,x_D)}.
+  \end{align*}
+  Note that by the decomposition axiom, we have \( X_A \indep X_D \mid X_C \). Thus,
+  \begin{align*}
+    f_{A \cup C}(x_A,x_C) / f_C(x_C) = f_{A \cup C \cup D}(x_A,x_C,x_D) / f_{C \cup D}(x_C,x_D).
+  \end{align*}  
+  Hence, \( f_{A \cup B \mid C \cup D}(x_A, x_B \mid x_C, x_D) = f_{A \mid C \cup D}(x_A \mid x_C, x_D) f_{B \mid C \cup D}(x_B \mid x_C, x_D) \) which says that \( X_A \indep X_B \mid X_{C \cup D} \).
+
+  \item We start with \( f_{A \cup B \mid C \cup D}(x_A,x_B \mid x_C, x_D) = f_{A \mid C \cup D}(x_A \mid x_{C}, x_D)  f_{B \mid C \cup D}(x_B \mid x_{C}, x_D)\). Multiply by \( f_{C \cup D}(x_C, x_D) \) and then divide by \( f_C(x_C) > 0 \) to get 
+  \begin{align*}
+    f_{A \cup B \cup D \mid C} (x_A,x_B,x_D \mid x_C) = f_{A \cup D \mid C}(x_A, x_D \mid x_C)f_{B \mid C \cup D}(x_B \mid x_C, x_D).
+  \end{align*}
+  With \( X_A \indep X_D \mid X_C \) we obtain 
+  \begin{align*}
+    f_{A \cup B \cup D \mid C} (x_A,x_B,x_D \mid x_C) &= f_{A \mid C}(x_A \mid x_C)f_{D \mid C}(x_D \mid x_C)f_{B \mid C \cup D}(x_B \mid x_C, x_D).
+  \end{align*}
+  The right-hand side is the same as \( f_{A \mid C}(x_A \mid x_C)f_{B \cup D \mid C}(x_B, x_D \mid x_C)  \).
+  Hence, \( X_A \indep X_{B \cup D} \mid X_C \).
+\end{itemize}
+ \end{proof}
+
+Studeny (1992) disproved Pearl's conjecture: it is impossible to find a finite set of axioms from which all CI relations can be deduced.
+
+We present a further fifth axiom that does not hold in general, but holds only for densities \( f \) such that \( f(x) > 0 \) for every \( x \in \mathcal{X} \).
+\begin{prop}[Intersection axiom]
+If \( f(x) > 0 \) for all \( x \in \mathcal{X} \) then \( X_A \indep X_B \mid X_{C \cup D} \) and \( X_A \indep X_C \mid X_{B \cup D} \implies X_A \indep X_{B \cup C} \mid X_D\).
+\end{prop}
+
+\begin{proof}
+  ...
+\end{proof}
+
+A simple corollary follows for \( D = \emptyset \): if \( X_A \) is independent of \( X_B \) given \( X_C \), and \( X_A \) independent of \( X_C \) given \( X_B \), then \( X_A \) is independent of \( X_{B \cup C} \).
+
+\subsection{Discrete random variables}
+
+If \( \mathbf X \) is a discrete random variable, then CI statements are algebraic constraints on the distribution, namely they are quadratic. This is where the algebra comes into perspective.
+
+Let \( \mathbf{X} = (X_1, ..., X_m) \in \mathcal{R} = \prod_{j=1}^m [r_j] \) be a vector of discrete random variables. The joint density function \( f: (i_1,...,i_m) \mapsto  \mathbb{P} (X_1 = i_1, ..., X_m = i_m) = p_{i_1 ... i_m} \) of \( \mathbf X \) can be represented by a \( r_1 \times r_2 \times ... \times r_m  \) tensor \( \mathbf p = (p_{i_1...i_m})_{(i_1,...,i_m) \in \mathcal{R}} \).
+
+\begin{eg}[Representation of the joint density function by a matrix]
+For \( m=2 \) we obtain a matrix 
+\begin{align*}
+  \mathbf p = \begin{bmatrix}
+    p_{11} & ... & p_{1 r_2} \\ \vdots & \ddots & \vdots \\ p_{r_1 1} & ... & p_{r_1 r_2}
+  \end{bmatrix} \in \mathbb R^{[r_1] \times [r_2]}.
+\end{align*}
+
+\end{eg}
+
+\begin{lemma}[Rank criterion for independence]
+  Let \( \mathbf X = (X_1, X_2) \) be a vector of discrete random variables. Then, \( X_1 \indep X_2 \) if and only if \( \mathrm{rank}(\mathbf p) = 1 \).
+\end{lemma}
+\begin{proof}Note that \( \mathbf p \neq \mathbf 0 \) since \( \mathbf p \) is a probability mass function.
+  \begin{itemize}
+    \item \( \implies \): Since \( X_1 \indep X_2 \), we have \( p_{ij} = \mathbb{P}(X_1 = i, X_2 = j) = \mathbb{P}(X_1 = i) P(X_2 = j) \) for all \( i \in [r_1],j \in [r_2] \). By marginalizing we know that \( \mathbb P(X_1 = i) = p_{i+} \) and \( \mathbb P(X_2 = j) = p_{+j} \); so \( p_{ij} = p_{i+}p_{+j} \). Hence 
+    \begin{align*}
+      \mathbf p = \begin{bmatrix}
+        p_{1+} \\ p_{2+} \\ ... \\ p_{r_1 +}
+      \end{bmatrix} \cdot \begin{bmatrix}
+        p_{+1} & p_{+2} & ... & p_{+r_2}
+      \end{bmatrix}.
+    \end{align*}
+    We see that \( \mathbf p \) is of rank \( 1 \) since \( \mathbf p \neq \mathbf 0 \).
+
+    \item \( \impliedby \): assume that \( \mathbf p = \mathbf a \mathbf b^T \). Without loss of generality, we assume that \( \mathbf a \geq \mathbf 0 \), \( \mathbf b \geq \mathbf 0 \) and \( \lVert \mathbf a \rVert_1 = \lVert \mathbf b \rVert_1 = 1 \). Note that \(  p_{i+} = p_{i1} + ... + p_{ir_2} = a_i b_1 + ... + a_i b_{r_2} = a_i  b_+  \), \(  p_{+j} = b_j  a_+ \) and \( 1 = p_{++}  = a_+ b_+\). Then 
+    \begin{align*}
+      p_{ij} = a_i  b_j = a_i \underbrace{b_+ a_+}_{=1} b_j = p_{i+}  p_{+j}.
+    \end{align*}
+    This proves that \( X_1 \indep X_2 \).
+  \end{itemize}
+\end{proof}
+
+
+
+\begin{cor}[Minor criterion for independence]
+  Let \( \mathbf X = (X_1, X_2) \) be a vector of discrete random variables. Then, \( X_1 \indep X_2 \) if and only if \( \mathrm{det}\begin{bmatrix}
+    p_{i_1j_1} p_{ij_2} \\ p_{i_2 j_1} p_{i_2 j_2}
+\end{bmatrix}= 0 \) for all \( i_1, i_2 \in [r_1] \) and \( j_1,j_2 \in [r_2] \).
+\end{cor}
+
+\begin{proof}
+  Follows from the linear algebra fact that a matrix has rank \( r \) if and only if there exists a \( r \times r \) minor that is non-zero and all \( (r+1)\times(r+1) \)-minors are zero.
+\end{proof}
+
+\begin{prop}[Algebraic characterization of conditional independence]\label{prop:algebraic-characterization-of-conditional-independence}
+Let \(\mathbf X \) be a discrete random vector and \( A,B,C \subset [m] \) be pairwise disjoint. Then, \( X_A \indep X_B \mid X_C \) if and only if 
+\begin{align*}
+  p_{i_A i_B i_C +} \cdot p_{j_Aj_Bi_C +} - p_{i_A j_B i_C + } \cdot p_{j_A i_B i_C + }  = 0
+\end{align*}
+for all \( i_A, j_A \in \mathcal{R}_A, i_B, j_B \in \mathcal{R}_B , i_C \in \mathcal{R}_C\).
+
+Alternatively, we can write this as
+\begin{align*}
+  \mathbb P(X_A = i_A, X_B = i_B, X_C = i_C) \mathbb P(X_A = j_A, X_B = j_B, X_C = i_C) \\ =  \mathbb P(X_A = i_A, X_B = j_B, X_C = i_C)
+  \mathbb P(X_A = j_A, X_B = i_B, X_C = i_C).
+\end{align*}
+\end{prop}
+
+\begin{proof}
+  Proof skipped.  Reduce this to the lemma by first marginalizing (so that \( A \cup B \cup C = [m] \)) and then conditioning on \( X_C \) (so that we may assume \( C = \emptyset \)). Apply the lemma.
+\end{proof}
+
+\marginnote{\small{Lec10, 14.11.2023}}
+
+The above proposition allows us to do algebra since we deal with polynomials. We will see that probability distributions satisfying the CI statements form a \emph{semi-algebraic} set.
+
+\begin{defi}[Conditional independence ideal]
+  Let \( \mathbf X \) be a discrete random vector and \( A,B,C \subset [m] \) be pairwise disjoint. The \textbf{conditional independence ideal} \( I_{A \indep B \mid C} \subset \mathbb C [\mathbf p] \) is defined as
+  \begin{align*}
+    (p_{i_A i_B i_C +} p_{j_Aj_Bi_C +} - p_{i_A j_B i_C + }  p_{j_A i_B i_C + } : i_A, j_A \in \mathcal{R}_A, i_B, j_B \in \mathcal{R}_B , i_C \in \mathcal{R}_C).
+  \end{align*}
+  \( I_{A \indep B \mid C} \subset \mathbb C [\mathbf p] \) is the ideal generated by all the \emph{quadratic polynomials} in Proposition \ref{prop:algebraic-characterization-of-conditional-independence}.
+
+  In general, if \( \mathcal C = \{ A_i \indep B_i \mid C_i \} \) is a set of conditional independence statements, then we define
+  \begin{align*}
+    I_{\mathcal{C}} \coloneqq \sum_{A \indep B \mid C \in \mathcal C} I_{A \indep B \mid C}.
+  \end{align*}
+\end{defi}
+
+\begin{defi}[Discrete conditional independence model]
+  The set of all probability distributions \( \mathcal{M}_{\mathcal{C}} \) that satisfy the quadratic polynomial equations is called the \textbf{discrete conditional independence model}; in mathematical terms,  \( \mathcal{M}_{\mathcal{C}} \) is defined as
+  \begin{align*}
+    \mathcal{M}_{\mathcal{C}} \coloneqq V_{\mathbb R}(I_{\mathcal{C}}) \cap \Delta_{\mathcal{R}},
+  \end{align*}
+  where \( \Delta_{\mathcal{R}} = \left\{ \mathbf p \in \mathbb{R}_{\geq 0}^{\mathcal R} : \sum p_{i_1,...,i_m} = 1\right\} \). The CI model \( \mathcal{M}_\Xi \) is a \emph{semi-algebraic} set.
+\end{defi}
+
+\begin{eg}
+  Consider \( \mathbf X = (X_1, X_2) \) and \( 1 \indep 2 \). Then the CI ideal is \( I_{1 \indep 2} = \left\{ p_{i_1j_1}p_{i_2j_2} - p_{i_2j_1}p_{i_1j_2} : i_1,i_2 \in [r_1], j_1,j_2 \in [r_2]\right\} \). These are all \( 2 \times 2 \)-minors of \( \mathbf p \).
+\end{eg}
+
+\subsection{Gaussian random variables}
+
+Now, we assume \( \mathbf X \sim \mathcal{N}_m(\mu, \Sigma) \). We will see that \( X_A \indep X_B \mid X_C \) corresponds to an \emph{algebraic} constraint.
+
+\begin{mdframed}  
+\begin{prop}[Rank criterion for conditional independence]
+  Fix \( \mu \in \mathbb R^m \) and a positive definite matrix \( \Sigma \in \mathrm{PD}(m) \).
+  Let \( \mathbf X \sim \mathcal{N}_m(\mu, \Sigma) \), and \( A, B, C \subset [m] \) pairwise disjoint. Then \( X_A \indep X_B \mid X_C \) if and only if 
+  \begin{align*}
+    \mathrm{rank}(\Sigma_{A \cup C, B \cup C}) = \# C.
+  \end{align*}
+\end{prop}
+\end{mdframed}
+
+
+\begin{proof}
+  The conditional distribution of \( X_{A \cup B} \) given \( X_C \) is normal with expected value \(  \mu_{A \cup B} + \Sigma_{A \cup B,A \cup B}\Sigma_{C,C}^{-1}(x_C - \mu_C) \) and covariance matrix \( \Sigma_{A \cup B, A \cup B} -  \Sigma_{A \cup B, C} \Sigma_{C,C}^{-1} \Sigma_{C, A \cup B} \). For a normal distribution we know that \( A \indep B \) if the covariance matrix with rows \( A \) and columns \( B \) is zero. Hence, we have
+  \begin{align*}
+    X_A \indep X_B \mid X_C  \iff \Sigma_{A,B} - \Sigma_{A , C} \Sigma^{-1}_{C,C} \Sigma_{C,B} = 0.
+  \end{align*}
+
+  The expression on the right hand is known as the \emph{Schur complement} of \( \Sigma_{C,C} \) in \( \Sigma_{A \cup C, B \cup C} \):
+  \begin{align*}
+    \Sigma_{A \cup C, B \cup C} = \begin{bmatrix}
+      \Sigma_{A,B} & \Sigma_{A,C} \\
+      \Sigma_{C, B} & \Sigma_{C,C}
+    \end{bmatrix}.
+  \end{align*}
+  One can prove that \( \Sigma_{A,B} = \Sigma_{A , C} \Sigma^{-1}_{C,C} \Sigma_{C,B} \) if and only if rank of \(  \Sigma_{A \cup C, B \cup C} \) is \( \# C \).
+\end{proof}
+
+Constraining the rank of a matrix to be \( k \) is algebraically equivalent to constraining all \( (k+1) \times (k+1) \)-minors to be zero.
+
+\begin{mdframed}  
+\begin{defi}[Gaussian conditional independence ideal]
+  Let \( A,B,C  \subset [m]\) be pairwise disjoint. The \textbf{Gaussian conditional independence ideal} \( I_{A \indep B \mid C} \subset \mathbb R [\sigma_{ij} : 1 \leq i,j \leq m] \) is defined as 
+  \begin{align*}
+    I_{A \indep B \mid C}  = ((\# C + 1) \times (\# C + 1) \text{ minors of } \Sigma_{A \cup C, B \cup C}).
+  \end{align*}
+\end{defi}
+\end{mdframed}
+
+\begin{eg}
+  Let \( \mathcal{C} = \left\{ 1 \indep 3, 1 \indep 3 \mid 2 \right\} \). What is the Gaussian conditional independence ideal \( I_{\mathcal{C}} \)?
+  \begin{align*}
+    I_{\mathcal{C}} = (\sigma_{1,3}, \det \Sigma_{\{1,2\}, \{ 3,2\}}) = (\sigma_{1,3}, \det \begin{bmatrix}
+      \sigma_{1,3} & \sigma_{1,2} \\ \sigma_{2,3} & \sigma_{2,2}
+    \end{bmatrix})
+  \end{align*}
+  So, the conditional independence model consists of all positive definite matrices \( \Sigma \) such that 
+  \begin{align*}
+    \sigma_{1,3} = 0 \text{ and } \sigma_{1,2} \sigma_{2,3} = \sigma_{1,3} \sigma_{2,2}.
+  \end{align*}
+  This is equivalent to 
+  \begin{align*}
+    \sigma_{1,3} = 0 \text{ and } \sigma_{1,2} \sigma_{2,3}  = 0.
+  \end{align*}
+  The solution set splits into two linear spaces 
+  \begin{align*}
+    L_1 = \left\{ \Sigma : \sigma_{1,3} = \sigma_{1,2} = 0  \right\} \text{ and } L_2 = \left\{ \Sigma : \sigma_{1,3} = \sigma_{2,3} = 0  \right\}.
+  \end{align*}
+  So \( 1 \indep (2,3) \) and \( 3 \indep (1,2)  \).
+
+  Thus, for multi-variate Gaussians, we have \( 1 \indep 3, 1 \indep 3 \mid 2 \implies 1 \indep (2,3) \lor 3 \indep (1,2) \).
+\end{eg}
+
+
+\subsection{Primary decomposition}
+
+\begin{eg}[Gaussian conditional independence]
+Assume \( \mathbf X \sim \mathcal{N}_m(\mu, \Sigma) \). Given the list of conditional independence \( \mathcal{C} = \left\{ 1 \indep 2 \mid 3, 2 \indep 3 \right\} \), can we infer that \( 2 \indep \left\{ 1,3 \right\} \)?
+
+You may recognize this as the \emph{contraction axiom}, which we have already proven using probability theory. This time we would like to use primary decomposition to prove this axiom. 
+
+The Gaussian conditional independence ideal \( I_{\mathcal{C}} \) corresponding to \( \mathcal{C} \) contains all Gaussian probability distributions that satisfy \( \mathcal{C} \); it is of the form 
+\begin{align*}
+  I_{\mathcal{C}} = \left(\sigma_{2,3}, \mathrm{det}\begin{bmatrix}
+    \sigma_{1,2} & \sigma_{1,3} \\ \sigma_{3,2} & \sigma_{3,3}
+  \end{bmatrix}\right) = \left( \sigma_{2,3}, \sigma_{1,2}\sigma_{3,3} - \sigma_{1,3}\sigma_{3,2} \right).
+\end{align*}
+Since \( \sigma_{23} = \sigma_{32} \) we have \(   I_{\mathcal{C}} = (\sigma_{23},  \sigma_{12} \sigma_{33}) = (\sigma_{23}, \sigma_{12}) \cap (\sigma_{23}, \sigma_{33})\). The vanishing set of \( I_{\mathcal{C}C} \) consists of two components \( V(\sigma_{23}, \sigma_{12}) \) and \( V(\sigma_{23}, \sigma_{33}) \); the latter is the set of all matrices vanishing entries in \( \sigma_{33} \) and \( \sigma_{23} \). Since positive definite matrices have positive entries on the diagonal, we have \( V(\sigma_{23}, \sigma_{33}) \cap \mathrm{PD}_{3} = \emptyset \). Thus, only the first component is relevant for us, and we see that \( 2 \indep \left\{ 1,3 \right\} \).
+\end{eg}
+
+\begin{eg}[Binary random variable]
+  Now assume \( \mathbf X = (X_1, X_2, X_3) \) is a binary random vector, that is \( X_i \in \left\{ 1,2 \right\} \) for all \( i=1,2,3 \). The associated conditional independence ideal \( I_{\mathcal{C}} \) of \( \mathcal{C} = \left\{ 1 \indep 2 \mid 3, 2 \indep 3 \right\} \) is 
+  \begin{gather*}
+    I_{\mathcal{C}} = ( (p_{111}+p_{211})(p_{122} + p_{222}) - (p_{112} + p_{212})(p_{121} + p_{221}),\\
+    p_{111}p_{221} - p_{121}p_{211},\\
+    p_{112}p_{222} - p_{122}p_{212}  ).
+  \end{gather*}
+  Here is the sketch of the computation. For \( \mathcal{C}_2 = \left\{ 1 \indep 2 \mid 3 \right\} \) we must compute \( I_{{\mathcal{C}_2}} = \left( p_{i_1i_2i_3} p_{j_1j_2i_3} - p_{i_1j_2i_3} p_{j_1i_2i_3} \right) \) for all \( i_1,i_2,j_1,j_2,i_3 \in \left\{ 1,2 \right\} \). For \( i_1 = i_2 = j_1 = j_2 = i_3 = 0 \) we see that the quadratic polynomial vanishes; also for \( i_1 = i_2 = j_1 = j_2 = 0 \) and \( i_3 = 0 \). Similarly, for other combinations except for \( i_1 = i_2 = i_3 = 1 \) and \( j_1 = j_2 = 2 \) as well as \( i_1 = i_2 = 1 \) and \( i_3 = j_1 = j_2 = 2 \). Further computation yields that these are the only two quadratic polynomials; hence \( I_{\mathcal{C}_2} \) is generated by \( p_{111}p_{221} - p_{121}p_{211}\) and \(p_{112}p_{222} - p_{122}p_{212} \). For \( \mathcal{C}_1 = \left\{ 2 \indep 3 \right\} \) we must compute the generators 
+  \begin{align*}
+    (p_{1i_2i_3}+ p_{2i_2i_3})(p_{1j_2j_3}+p_{2j_2j_3}) - (p_{1i_2j_3}+p_{2i_2j_3})(p_{1i_3j_2} + p_{2i_3j_2})
+  \end{align*}
+  for all \( i_2,i_3,j_2,j_3 \in \left\{ 1,2 \right\} \). We see that the only non-zero quadratic polynomial is \( (p_{111}+p_{221})(p_{122} + p_{222}) - (p_{112} + p_{212})(p_{121} + p_{221}) \).
+
+  ...
+\end{eg}

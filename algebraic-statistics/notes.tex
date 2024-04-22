@@ -2,17 +2,24 @@
 \usepackage{marginnote}
 
 
-\def\nterm {}
-\def\nyear {}
-\def\nlecturer {}
+\def\nterm {Winter}
+\def\nyear {2023}
+\def\nlecturer {Carlos Améndola}
 \def\ncourse {Algebraic Statistics}
 
 \input{header}
+\usepackage{makeidx}
+\usepackage[]{mdframed}
+\usepackage{algpseudocode}
+\usepackage{tikz-3dplot}
+
+\makeindex
 
 \newcommand{\PhantC}{\phantom{\colon}}%
 \newcommand{\PhantSQ}{\phantom{\sqrt{\hspace{0.3ex}}}}%
 \newcommand*{\vertbar}{\rule[-1ex]{0.5pt}{2.5ex}}
 \newcommand*{\horzbar}{\rule[.5ex]{2.5ex}{0.5pt}}
+\newcommand{\indep}{\perp \!\!\! \perp}
 
 % https://tex.stackexchange.com/questions/63355/wrapping-cmidrule-in-a-macro
 \ExplSyntaxOn
@@ -36,127 +43,496 @@
 \maketitle
 \tableofcontents
 
-\include{chapters/dimension-theory}
+\clearpage
 
+\section{Introduction}
 
+\subsection{Discrete Markov chain}
 
+\marginnote{\small{Lec01}}
 
+Let \( X_1, X_2, ..., X_m \) be a sequence of random variables on the same finite state space \( \Omega \). The joint probability distribution is \( P (X_1 = x_1, ..., X_m = x_m) 
+\) with \( x_i \in \Omega \) such that \( \sum P(X_1 = x_1,...,X_n = x_n) = 1 \).
 
-\section{Maximum Likelihood Estimation}
-
-\begin{defi}[Parameter space]
-  An open subset \( \Theta \subset \mathbb R^d \) is called the \textbf{parameter space}. Elements \( \theta = (\theta_1,...,\theta_d) \in \Theta \) are called \textbf{parameters}.
+\begin{defi}[Markov chain]
+  A sequence \( X_1, ..., X_n \) is called a \textbf{Markov chain} if the probability of the next state depends only on the current state; that is,
+  \begin{align*}
+    \mathbb P (X_{n+1} = x_{n+1} \mid X_1 = x_1, ..., X_n = x_n) = \mathbb P (X_{n+1} = x_{n+1} \mid X_n = x_n).
+  \end{align*}
 \end{defi}
 
-\begin{defi}[Algebraic statistical model]
-  An \textbf{algebraic statistical model} is a map \( \mathbf f = (f_1,...,f_m): \mathbb C^d \to \mathbb C^m \) with \(f_i \in \mathbb Q[\theta_1,...,\theta_d] \) such that 
-  \begin{itemize}
-    \item \( f_1 + ... + f_m - 1 = 0 \in \mathbb Q[\theta_1,...,\theta_d] \) is the zero polynomial, and 
-    \item \( \mathbf f(\theta) > 0 \) for all parameters \( \theta \in \Theta \).
-  \end{itemize}
-  For each parameter \( \theta \in \Theta \) a statistical model \( \mathbf f \) defines a {\textbf{probability distribution}} on the state space \( \left\{ 1,...,m \right\} \), that is, \( f_i(\theta) = p_i \) means that state \( i \in \left\{ 1,...,m \right\} \) occurs with probability \( p_i \in [0,1] \) for parameter \( \theta \).
-\end{defi}
-
-Assume we are given the number of occurrences of states \( 1,...,m \) of an experiment by a vector \( \mathbf u = (u_1,...,u_m) \in \mathbb N^m \). Fix a parameter \( \theta \in \Theta \). The probability that the state \( i \in \left\{ 1,...,m \right\} \) appears \( u_i \) times is given by
-\begin{align*}
-  f_i(\theta)^{u_i}.
-\end{align*}
-The problem of \textbf{maximum likelihood estimation} is to find the best parameter \( \theta \) that maximizes \(   \prod_{i=1}^m f_i(\theta)^{p_i}\). Maximizing this function is equivalent to maximizing the so called \textbf{log-likelihood function}
-\begin{align*}
-  \ell_u(\theta) = \sum^m_{i=1}u_i \cdot \log{f_i(\theta)}.
-\end{align*}
-From calculus, we know that a necessary condition for a local and global maximum \( \hat \theta \) is that the derivative of \( \ell_u \) must vanish at \( \hat \theta \) (note that if \( \Theta \) were not open, then the derivative need not vanish at a global maximum; on the other hand a global maximum need no exist). Thus, we need to find a solution to \( d \)-many equations, called the \textbf{critical equations}
-\begin{align*}
-  \frac{\partial \ell_u}{\partial \theta_1} &= \sum^m_{i=1} \frac{u_i}{f_i} \frac{\partial f_i}{\partial \theta_1} = 0 \\
-  &... \\
-  \frac{\partial \ell_u}{\partial \theta_d} &= \sum^m_{i=1} \frac{u_i}{f_i} \frac{\partial f_i}{\partial \theta_d} = 0 \\
-\end{align*}
 
 \begin{mdframed}
-\begin{center}
-  \textbf{{Our goal is to find all solutions \( \theta \in \mathbb C^d \) to the critical equations.}}
-\end{center}
+  Motto in algebraic statistics: \textbf{Statistical models are semi-algebraic sets}.
 \end{mdframed}
 
-Let \( \mathcal H \) be the locus where all the denominators of the rational functions in the critical equations vanish. The set of solutions \( \theta \in \Theta \) outside \( \mathcal H \) is an \emph{algebraic variety} in \( \mathbb C^d \) called the \textbf{likelihood variety}.
+Here is an example of a statistical model that can be represented as a solution set of system of polynomial equations and inequalities.
 
-\begin{prop}
-  For generic data \( u \), the number of solutions to the critical equations is independent of \( u \).
+\begin{prop}[Implicit Markov chain model]
+  A vector \( p \in \mathbb R^8 \) is the probability distribution from a Markov chain model \( \mathcal{M} \) if and only if 
+  \begin{itemize}
+    \item \( p \in \Delta_7 \),
+    \item \( p_{010}p_{111} - p_{011} p_{110} \),
+    \item \( p_{000}p_{101} - p_{001}p_{100} \).
+  \end{itemize}
+  The second and third equality is obtained by taking the determinant of the matrix slices \( j=0 \) and \( j = 1 \):
+  \begin{align*}
+    \begin{bmatrix}
+      p_{000} & p_{001} \\
+      p_{100} & p_{101}
+    \end{bmatrix} \quad \text{and} \quad 
+    \begin{bmatrix}
+      p_{010} & p_{011} \\
+      p_{110} & p_{111}
+    \end{bmatrix}.
+  \end{align*}
 \end{prop}
 
-\begin{proof}
+
+\begin{proof}[Proof]
+  \( \implies \): 
+  Assume we are given random variable \( X_1, X_2 \) and \( X_3 \) taking values in \( \Omega = \left\{ 0,1 \right\} \) and satisfying the Markov chain property. A joint probability distribution can be given as an \( \mathbb{R}^8 \) vector 
   \begin{align*}
-    \frac{\partial}{\partial \theta_i} \log{\frac{f_j}{g_j}} = \frac{g_j}{f_j} \cdot \left( \frac{\partial f_j g_j - \partial g_j f_j}{g_j^2} \right) = \frac{\partial f_j g_j - \partial g_j f_j}{f_j g_j} = \frac{\partial f_j}{f_j} - \frac{\partial g_j}{g_j}
+    \mathbf p = \begin{bmatrix}
+      p_{000} \\ p_{001} \\ \vdots \\ p_{111}
+    \end{bmatrix} \in \Delta_7.
   \end{align*}
+  By definition of conditional probability, we compute
+  \begin{align*}
+    &P(X_3 = k \mid X_1 = i, X_2 = j) = \frac{p_{ijk}}{p_{ij+}} \\
+    &P(X_2 = j \mid X_1 = i) = \frac{p_{ij+}}{p_{i++}}.
+  \end{align*}
+  Using the Markov chain property, we obtain the equality 
+  \begin{align*}
+    \frac{p_{ijk}}{p_{ij+}} =  \frac{p_{ij+}}{p_{i++}}.
+  \end{align*}
+  Similarly, if for some different \( i \neq i' \) we obtain \( \frac{p_{i'jk}}{p_{i'j+}} =  \frac{p_{ij+}}{p_{i++}} \), and thus 
+  \begin{align*}
+    \frac{p_{ijk}}{p_{ij+}} = \frac{p_{i'jk}}{p_{i'j+}}.
+  \end{align*}
+  This yields \( p_{ijk} (p_{i'j0} + p_{i'j1}) = p_{i'jk} (p_{ij0} + p_{ij1}) \).
+  \begin{itemize}
+    \item Substitute \( i=j=k=1, i' = 0 \): \( p_{111}(p_{010} + p_{011}) = p_{011}(p_{110} + p_{111}) \). Thus, \( p_{111}p_{010} - p_{011}p_{110} = 0 \).
+    \item Substitute \( i=j=k=0, i' = 1 \): \( p_{000}(p_{100} + p_{101}) = p_{100}(p_{000} + p_{001}) \). Thus, \( p_{000}p_{101} - p_{100}p_{001} = 0 \).
+    \item Substitute \( i=j=1, k=0, i' = 0 \): \( p_{110}(p_{010} + p_{011}) = p_{010}(p_{110} + p_{111}) \). Thus, \( p_{110}p_{011} - p_{010}p_{111} = 0 \).
+    \item And so on (we obtain the same equations)...
+  \end{itemize}
 \end{proof}
 
-\subsection{Computing the likelihood variety}
-
-The ideal \( (\frac{\partial \ell_u}{\partial \theta_1}, \dots, \frac{\partial \ell_u}{\partial \theta_d}) \) is generated by \emph{rational} functions. Let's find another set of generators that consists of only polynomials. We introduce unknowns \( z = z_1,...,z_m \) where \( z_i \) represents \( f_i^{-1} = \frac{1}{f_i} \). So, we have two polynomial rings \( \mathbb Q[\theta] \) and \( \mathbb Q[\theta, z] \); clearly 
-\begin{align*}
-  \mathbb Q[\theta] \xhookrightarrow{} \mathbb Q[\theta, z].
-\end{align*}
-Consider the ideal \( J_u \) generated by \( d + m \) polynomials in \( \mathbb Q [\theta, z] \)
-\begin{align*}
-  J_u \coloneqq \left(
-    \sum^m_{i=1}u_i z_i\frac{\partial f_i}{\partial \theta_1}, 
-    \dots,
-    \sum^m_{i=1}u_i z_i\frac{\partial f_i}{\partial \theta_d}, 
-    z_1 f_1 - 1, \dots , z_m f_m - 1 
-  \right).
-\end{align*}
-A point \( (\theta, z) \in \mathbb C^{d+m} \) lies in the variety \( V(J_u) \) if and only if
-\begin{enumerate}
-  \item \( \theta \) is a solution to the critical equations,
-  \item \( f_i(\theta) \neq 0 \), and
-  \item \( z_i = f_i^{-1}(\theta) \).
-\end{enumerate}
- Next, we compute the \textbf{elimination ideal} of \( J_u \) in \( \mathbb Q[\theta] \), that is 
-\begin{align*}
-  I_u \coloneqq J_u \cap \mathbb Q[\theta]
-\end{align*}
-We call \( I_u \) the \textbf{likelihood ideal} of the model \( \mathbf f \) with respect to the data \( u \). A point \( \theta \in \mathbb C^d \) with \( f_i(\theta) \neq 0 \) lies in \( V(I_u) \) if and only if \( \theta \) is solution to the critical equations. \textbf{Thus, \( V(I_u) \) is the likelihood variety.}
-
-\begin{remark}[Algorithm]
-  \(  \)
-\begin{enumerate}
-  \item Compute the likelihood ideal: \( I_u = J_u \cap \mathbb Q [\theta] \)
-  \item Compute \( V(I_u) \) (for example by computing a Gröbner basis).
-  \item Compute \( S = V(I_u) \cap \mathbf f^{-1}(\Delta) \), where \( \Delta \) is the \( (m-1) \)-dimensional probability simplex.
-  \item For each \( \theta \in S \) check if \( \mathbf f(\theta) \) is a local maxima (for example by examining the Hessian matrix).
-\end{enumerate}
+\begin{remark}
+  A Markov chain model is an example of a \textbf{conditional independence model}.
 \end{remark}
 
 
-\subsection{Maximum likelihood degree}
-An important question for computational statistics is this:
-\begin{mdframed}
-  \begin{center}
-    \textbf{{What happens to the estimate \( \hat \theta \) when we vary \( u \)?}}
-  \end{center}
-\end{mdframed}
-
-\begin{defi}[Algebraic model]
-  We say a model \( \mathbf f \) is \textbf{algebraic} if all the \( f_i \) are polynomials or rational functions.
-\end{defi}
-
-\begin{prop}[\( \hat \theta \) is an algebraic function of the data \( u \)]
-  The maximum likelihood estimate \( \hat \theta \) is an algebraic function of the data \( u \) if \( \mathbf f \) is algebraic. That is, \( \hat \theta_i \) is a zero of a polynomial of the following form 
+\begin{prop}[Parametrization of the Markov chain model]
+  A parametrization of the Markov chain model is given by 
   \begin{align*}
-    a_r(u) x^r + a_{r - 1}(u)x^{r-1} + ... + a_i(u) x + a_0(u),
+    \varphi(\pi, \pmb \alpha) =  \begin{bmatrix} \vdots \\
+      \pi_{j_i} \prod^m_{i=2}\alpha_{i, j_{i-1}, j_i}     \\ \vdots \end{bmatrix}  = \begin{bmatrix}
+      p_{000} \\ p_{001} \\ \vdots \\ p_{111}
+    \end{bmatrix} = \mathbf p \in \Delta_7
   \end{align*}
-  where each \( a_i \in \mathbb Q[u] \).
+  where \( \pi_{j_i} = P(X_1 = j_i) \) and \( \alpha_{i,j_{i-1}, j_i} = P(X_i = j_{i} \mid X_{i-1} = j_{i-1}) \).
 \end{prop}
 
-Without loss of generality, we can assume that the polynomial is an \emph{irreducible element} of \( \mathbb Q[u, x] \). This means that \textbf{the discriminant is a nonzero polynomial in \( \mathbb Q[u] \).} 
+\begin{eg}
+Let us consider the case with three random variables \( X_1, X_2 \) and \( X_3 \). We define \( \alpha_{ij} = \alpha_{1ij} \) and \( \beta_{jk} = \alpha_{2jk} \). Here are all the parameters 
+\begin{align*}
+  \pmb \pi = (\pi_0, \pi_1), \pmb \alpha = \begin{bmatrix}
+    \alpha_{00} & \alpha_{01} \\ \alpha_{10} & \alpha_{11}
+  \end{bmatrix}, \pmb \beta = \begin{bmatrix}
+  \beta_{00} & \beta_{01} \\ \beta_{10} & \beta_{11} \end{bmatrix}.
+\end{align*}
+Note that the components of \( \pi \) sum to one as well as the rows of \( \alpha \) and \( \beta \). Thus, we have five \emph{independent variables} \( \pi_0, \alpha_{00}, \alpha_{10}, \beta_{00} \) and \( \beta_{10} \). We later say that \( \mathrm{dim}(\mathcal{M}) = 5 \).
+\end{eg}
 
-\begin{defi}[Generic]
-  We say that \( u \in \mathbb R^m \) is \textbf{generic} if no discriminant vanishes at \( u \) for all \( i=1,...,m \). Hence, there exist no multiple roots in any field extension (see Wikipedia, section \emph{Zero discriminant}). The generic vectors are dense in \( \mathbb R^m \).
+
+\subsection{Maximum likelihood}
+
+Assume we observe the following data \( D \):
+\begin{align*}
+  000, 010, 110, 000, 101, 110, 100, 010, 110, 111, 000, 000, 010.
+\end{align*}
+The count vector reads \( \mathbf u = (4,0,3,0,1,1,3,1) \). The likelihood function is
+\begin{align*}
+  L_{u}(p) = {n \choose \mathbf u} \prod_{i,j,k}p_{ijk}^{u_{ijk}}
+\end{align*}
+where \( {n \choose \mathbf u} = \frac{n!}{\prod_{i,j,k} u_{ijk}!} \) is the multinomial coefficient. We want to maximize \( L_u \). When we use the implicit model, we obtain a \emph{constrained optimization problem} 
+\begin{align*}
+  \argmax_{\mathbf p \in \Delta_7}\left \{\prod_{ijk}{p_{ijk}}^{u_{ijk}}\right \} \text{ subject to } \begin{cases}
+    p_{010}p_{111} - p_{011} p_{110}  \\
+    p_{000}p_{101} - p_{001}p_{100} 
+  \end{cases}
+\end{align*}
+An \emph{unconstrained optimization problem} is given by the parametrized Markov model (although it is not quite unconstrained): optimize 
+\begin{align*}
+  \argmax_{\pmb \pi, \pmb \alpha, \pmb \beta} \left\{ \prod_{ijk} (\pi_i \alpha_{ij} \beta_{jk})^{u_{ijk}} \right\}
+\end{align*}
+with constraints that \( \pmb \pi, \pmb \alpha, \pmb \beta \) are probability distributions.
+
+A typical strategy is to compute the logarithm of \( L_D \), equal the partial derivatives of that function to zero and solve the equations. The equations that we set to zero are called \textbf{score equations} or \textbf{critical equations}.
+
+
+We define the log-likelihood function 
+\begin{align*}
+  l(\pi, \alpha, \beta \mid u) = \sum_{ijk}u_{ijk} ( \log(\pi_i) + \log(\alpha_{ij}) + \log(\beta_{jk})) 
+\end{align*}
+Computing the derivative
+\begin{align*}
+  \frac{\partial l}{\partial \pi_0} = \frac{u_{0++} (1 - \pi_0)}{1} = u_{1++}\pi_0
+\end{align*}
+Hence \( \hat \pi_0 = \frac{u_{0++}}{u_{+++}} \) where \( u_{+++} = N \) the total sample size. Other solutions \( \hat \alpha_{10} = \frac{u_{10+}}{u_{1++}} \), \( \hat \beta_{01} = \frac{u_{+01}}{u_{+0+}} \).
+
+To make a prediction we compute \( \hat p_{101} = \hat \pi_1 \hat \alpha_{10} \hat \beta_{01} \) where \( \hat \pi_1 = \frac{u_{1++}}{u_{+++}} \). The estimator is then \( \hat p_{101} = \frac{u_{10+} u_{+01}}{u_{+++}u_{+0+}} \). In this way 
+\begin{align*}
+  \hat \pi_i = \frac{u_{i++}}{u_{+++}}, \hat \alpha_{ij} = \frac{u_{ij+}}{u_{i++}}, \hat \beta_{ij} = \frac{u_{+jk}}{u_{+j+}}, \hat p_{ijk} = \frac{u_{ij+} u_{+jk}}{u_{+++}u_{+j+}}.
+\end{align*}
+
+A closed form rational solution \( \hat{\mathbf p} \) exists for our Markov chain model 
+\begin{align*}
+  \hat p_{ijk} = \frac{u_{ij+} u_{+jk}}{u_{+++}u_{+j+}}.
+\end{align*}
+
+In general, score equations rarely have simple closed solutions; for instance the solution need not be unique.
+
+
+\marginnote{\small{Lec02, 04/17/23}}
+
+\begin{defi}[Homogeneous Markov chain]
+  A \textbf{homogeneous Markov chain} is a Markov chain where the transition matrices stay the same for each step, i.e. \( \alpha = \beta \).
 \end{defi}
 
-\begin{defi}[Maximum likelihood degree]
-  The \textbf{maximum likelihood degree} or \textbf{ML degree} of an algebraic statistical model is the \emph{number of solutions to the critical equations} for generic data point \( u \in \mathbb R^m \).
+\subsection{Hypothesis testing}
+Having observed data, we found a distribution \( \hat p \in \mathcal{M} \) in the model that `best' explains the data. 
+
+\begin{mdframed}
+  How well does the model fit the data?\\
+  Do we think that the data was generated by some distribution in the model?
+\end{mdframed}
+
+Let \( p \) be the true generating distribution of the count \( u \). Hypothesis test:  \(H_0: p \in \mathcal{M} \) vs \( H_1: p \notin \mathcal{M} \). (In practice, for example clinical tests, one often wants that \( H_0 \) does not occur. One wants to reject \( H_0 \). One wants to have enough evidence to reject \( H_0 \). Only take \( H_1 \) if there is enough evidence.). 
+
+Idea: suppose \( p \in \mathcal{M} \) and we observe \( u \). Consider other outcomes \( V \) that could have been generated by \( p \). The question is: what proportion of such data is more likely to have occurred than \( u \)? If this proportion is large, then either
+\begin{enumerate}
+  \item hypothesis \( H_0 \) is false and \( H_1 \) holds 
+  \item we were unlucky (a rare event happened)
+\end{enumerate}
+
+For example, we throw a dive and we assume that the dice is fair. Assume we observe that nine out of ten times it was heads. If we assume that \( H_0: \)the dice is fair, that count would be very rare.
+
+No way to know if we were unlucky or \( H_0 \) is wrong. In practive, if probability is small enough \( < 5 \% \), then one says there is enough significant evidence to reject \( H_0 \). Otherwise, one says there is not enough evidence to reject.
+
+Problem: probability of observing data \( v \) depends on (unknown) p.
+
+Key insight from Fisher: Fisher's exact test: for some models the likelihood function does not depend on exact data but only through a (non-injective) function of the data. This function is called sufficient statistic. Back to \( m=3 \) with parameters \( \pi, \alpha, \beta \).
+\begin{align*}
+  P (\mathbf u \mid \pmb \pi, \pmb \alpha,\pmb \beta)  &=  {n \choose u} \prod_{ijk} (\pi_i \alpha_{ij} \beta_{jk})^{u_{ijk}} \\ 
+  &= {n \choose u} \prod_{ijk} (\pi_i \alpha_{ij})^{u_{ij+}} \prod \beta_{jk}^{u_{+jk}}
+\end{align*}
+The quantities \( u_{ij+}, u_{+jk} \) are the \emph{sufficient statistics}.
+
+Fishers ida: compare observed data \( u \) with other data \( v \). The definition of a Markov chain is 
+
+\clearpage
+\include{chapters/probability-primer}
+
+
+\clearpage
+\include{chapters/algebra-primer}
+
+
+
+\clearpage
+\include{chapters/conditional-independence}
+
+\clearpage
+\section{Statistics Primer}
+
+\marginnote{\small{Lec13, 27.11.2023}}
+
+\begin{defi}[Statistical model]
+  A \textbf{statistical model} \( \mathcal{M} \) is a collection of probability distributions or density functions. A \textbf{parametric statistical model} \( \mathcal{M}_{\Theta} \) is a statistical model of the form \( \mathcal{M}_{\Theta} = \left\{ p_\theta : \theta \in \Theta \right\} \), where \( \Theta \subset \mathbb R^d \) is a finite-dimensional parameter space.
 \end{defi}
 
+\begin{defi}[Identifiable Model]
+  A statistical model is called \textbf{identifiable} if \( p_\theta = p_{\theta '} \) implies \( \theta = \theta' \).
+\end{defi}
+
+\begin{eg}[Binomial random variable model]
+  Let \( n \in \mathbb{N} \). For \( \theta \in \Theta = [0,1] \) we define \( p_\theta(k) = {n \choose k} \theta^k (1 - \theta)^{n - k} \). A statistical model is given by \( M_\theta = \left\{ p_\theta : \theta \in \Theta \right\}  \).
+\end{eg}
+
+\begin{eg}[Multivariate normal random vector]
+  Let \( X \in \mathbb{R}^m \) be a real random vector. Let \( \Theta = \mathbb{R}^m \times \mathrm{PD}_m \). Define \( \mathcal{M}_\Theta = \left\{ p_\theta (x) : \theta \in \Theta \right\} \) where 
+  \begin{align*}
+    p_\theta = (2\pi)^{-\frac{m}{2}} |\Sigma|^{-\frac{1}{2}}\exp{\left( -\frac{1}{2} (x - \mu)^T \Sigma^{-1}(x - \mu) \right)}.
+  \end{align*}
+\end{eg}
+
+\begin{defi}[Implicit statistical models]
+  \textbf{Implicit statistical models} are given by constraints on the probability distributions or densities.
+\end{defi}
+
+\begin{eg}[Implicit binomial statistical model]
+  The binomial model can be implicitly given by the intersection of \( \Delta_n \) with the \( 2 \times 2 \)-minors of 
+  \begin{align*}
+    \begin{bmatrix}
+      \dfrac{x_0}{{n \choose 0}} & \dfrac{x_1}{{n \choose 1}} & \dfrac{x_2}{{n \choose 2}} & \dots & \dfrac{x_{n-1}}{{n \choose n-1}} \\[1.5em]
+      \dfrac{x_1}{{n \choose 1}} & \dfrac{x_2}{{n \choose 2}} & \dfrac{x_3}{{n \choose 3}} & \dots & \dfrac{x_{n}}{{n \choose n}}
+    \end{bmatrix}.
+  \end{align*}
+\end{eg}
+
+Here is another implicit model.
+
+\begin{eg}[Independent random variables]
+  Let \( X,Y \) be two discrete random variables with \( X \in [r] \) and \( Y \in [c] \). Let \( \mathcal{R} = [r] \times [c] \) and \( \Delta_{\mathcal{R}} = \Delta_{n} \) where \( n = |\mathcal{R}| - 1 \). The \textbf{model of independence} \( \mathcal{M}_{X \indep Y} \) is defined by the constraints
+  \begin{align*}
+    \mathcal{M}_{X \indep Y} &= \Delta_{\mathcal{R}} \cap \{ \mathbf p \in \mathbb R^{r \times c} : \mathbb P(X = i, Y = j) = \mathbb P(X = i) \mathbb P(Y = j), \; \forall i \in [r], j \in [c]\} \\
+    &=  \Delta_{\mathcal{R}} \cap \{ \mathbf p \in \mathbb R^{r \times c} : \mathrm{rank}(\mathbf p) = 1\}.
+  \end{align*}
+  This is an \emph{implicit} representation of \( \mathcal{M}_{X \indep Y} \). For a \emph{parametric} representation we define \( \theta = (\alpha, \beta) \in \Delta_{r - 1} \times \Delta_{c - 1} \) with \( \mathbb P_{\theta}(X_1 = i, X_2 = j) = \alpha_{i} \beta_{j} \).
+\end{eg}
+
+\begin{eg}[Main example of implicit statistical models]
+  Consider a set of conditional independence statements \( \mathcal{C}  = \left\{ A_1 \indep B_1 \mid C_1, A_2 \indep B_2 \mid C_2, \dots \right\}\). If \( \mathbf X \) is a discrete random vector, then the discrete conditional independence model is implicit:
+  \begin{align*}
+    \mathcal{M}_{\mathcal{C}} = V\left(\sum_{\mathcal{C}} I_{A \indep B \mid C}\right) \cap I_{\Delta_{\mathcal{R}}}.
+  \end{align*}
+  If \( \mathbf X \sim \mathcal{N}_m(\mu, \Sigma) \) is a Gaussian vector, then the Gaussian conditional independence model is also implicit
+  \begin{align*}
+    \mathcal{M}_{\mathcal{C}} = V\left(\sum_{\mathcal{C}} I_{A \indep B \mid C}\right) \cap \mathrm{PD}_{m}.
+  \end{align*}
+\end{eg}
+
+\begin{defi}[Statistic]
+  Let \( \mathbf X \in \mathcal{X} \) be a random vector with state space \( \mathcal{X} \).
+  A \textbf{statistic} is a function from the state space \( \mathcal{X} \) to some set.
+\end{defi}
+
+Examples are 
+\begin{itemize}
+  \item \( \bar X_n = \frac{1}{n} \sum^n_{i=1}X_i \),
+  \item \( S^2_n = \frac{1}{n-1} \sum^n_{i=1} (X_i - \bar X_n)^2 \),
+  \item \( T = \max\left\{ X_1,X_2, ..., X_n \right\} \),
+  \item \( T' = 5 \).
+\end{itemize}
+
+We informally describe what a sufficient statistic is. We say \( T \) is a \textbf{sufficient statistic} if the statistician who knows the value of \( T \) can do just as good a job of estimating the unknown parameter \( \theta \) as the statistician who knows the entire random sample.
+
+\begin{defi}[Sufficient statistic]
+  A statistic \( T \) is called \textbf{sufficient} if \( \mathbb P(X = x \mid T(X) = t, \theta) = \mathbb P(X = x \mid T(X) = t) \).
+\end{defi}
+
+\begin{thm}[Factorization theorem]
+  Let \( \mathbf X \) be a random vector with joint density \( f(\mathbf x \mid \theta) \). A statistic \( T \) is sufficient if and only if the joint density \( f \) can be factored as follows
+  \begin{align*}
+    f(\mathbf x \mid \theta) = u(\mathbf x) v(T(\mathbf x), \theta)
+  \end{align*}
+  for non-negative functions \( u,v \).
+\end{thm}
+
+\begin{eg}[Sufficient statistic of the likelihood function of a multivariate normal distribution]
+  Given samples \( X^{(1)},  \dots, X^{(N)} \) i.i.d. normal, the joint distribution is given by 
+  \begin{align*}
+    p_{\mu, \Sigma}( X) = \prod^N_{i=1} \frac{1}{(2\pi)^{\frac{m}{2}} |\Sigma|^\frac{1}{2}} \exp{\left( -\frac{1}{2} (X^{(i)} - \mu)^T \Sigma^{-1}(X^{(i)} - \mu) \right)}.
+  \end{align*}
+  A sufficient statistic is given by 
+  \begin{align*}
+    T( X) = \begin{bmatrix}
+      \bar X \\
+      \frac{1}{N} \sum^N_{i=1} (X^{(i)} - \bar X)(X^{(i)} - \bar X)^T
+    \end{bmatrix}.
+  \end{align*}
+\end{eg}
+
+
+
+\clearpage
+
+
+\subsection{4.12}
+
+Last topic: Parameter estimation. Given a sample \( X^{(1)}, X^{(2)}, ..., X^{(N)} \) iid \( \sim P_\theta \in \mathcal{M}_{\Theta} \) estimate the value of \( \theta \in \Theta \). We have an estimator \( \hat \theta (X^{(1)} ,  ... , X^{(N)}) \).
+
+\begin{eg}
+  Assume \( X^{(1)}, ..., X^{(N)}  \sim \mathrm{Ber}(\theta)\)  with \( \mathbb{E} [\bar X_N] = \theta \) unbiased, \( \hat \theta (X^{(1)}, ..., X^{(N)}) \coloneqq \bar X_N \).
+\end{eg}
+
+Methods of moment: let \( X = (X_1,..., X_m) \) be a random vector. Let \( \alpha \in \mathbb N^m \), the \( \alpha \)-th moment is defined to be \( \mu_\alpha = \mathbb E[X_1^{\alpha_1} X_2^{\alpha_2} ... X_m^{\alpha_m}] \). The order of moment is \( |\alpha| = \sum \alpha_i \).
+
+Another example: Binomial models
+
+\begin{eg}[Multidimensional gaussian]
+  Assume \( X^{(1)}, ..., X^{(N)} \sim N_m ( \mu, \Sigma) \).
+  \begin{itemize}
+    \item \( M_1 \coloneqq \mathbb{E}[X] = \mu \in \mathbb R^m \).
+    \item \( M_2 \coloneqq \mathbb{E}[XX^T] = \Sigma + \mu\mu^T \)
+    \item \( M_3 \coloneqq \mathbb{E}[X \otimes X \otimes X] \)
+  \end{itemize}
+  The first two order moment suffice to solve the system.
+  \begin{align*}
+    \hat \mu_1 = \mu, \hat \mu_2 = \Sigma + \mu\mu^T
+  \end{align*}
+  and 
+  \begin{align*}
+    \hat \Sigma = \hat M_2 - \hat M_1 \hat M_1^T &= \frac{1}{N} \sum^N_{i=1} X^{(i)} (X^{(i)})^T - \bar X_N \bar X_N^T \\
+    &= \frac{1}{N} \sum^N_{i=1} (X^{(i)} - \bar X)(X^{(i)} - \bar X)^T = \frac{N-1}{N}S_N^2 = \tilde S^2_N
+  \end{align*}
+\end{eg}
+
+\textbf{Sample covariance: } \( S_N^2 = \frac{1}{N- 1} \sum^N_{i=1} (X^{(i)} - \bar X)^2 \). 
+
+Given \( X^{(1)}, ..., X^{(N)} \) iid, \( \mathbb{E}[X^{(i)}] = \mu \) and \( \mathrm{Var}[X^{(i)}] = \sigma^2 \). Is the sample covariance unbiased, i.e. \( \mathbb{E}[S_N^2] = \sigma^2 \) and \( \mathbb{E}[\tilde S^2_N] = (1 - \frac{1}{N})\sigma^2 \).
+
+\begin{proof}
+  \begin{align*}
+    \mathbb{E}[\sum^N_{i=1} (X^{(i)} - \bar x)^2] &= \sum^N_{i=1} \mathbb E [(X^{(i)} - \bar x)^2] = \sum^N_{i=1} \mathrm{Var}[X^{(i)} - \bar x] = \sum^N_{i=1} \mathrm{Var}[ (1 - \frac{1}{N})X^{(i)}  - \frac{1}{N}\sum_{j}^N X^{(j)}] \\
+&= \sum^N_{i=1}((1 - \frac{1}{N})^2 \mathrm{Var}[X^{(i)}] + \frac{1}{N^2}\sum \mathrm{Var[X^{(j)}]}) \\
+&= \sum (\frac{N - 1}{N})^2 \sigma^2 + \frac{N - 1}{N^2} \sigma^2 \\
+...
+  \end{align*}
+\end{proof}
+
+Gaussian mixture: \( f(x) = \lambda f_{\mu_1, \sigma_1^2}(x) + (1 - \lambda) f_{\mu_2,  \sigma_2^2} (x) \). Assume \( X_1 \sim N(\mu, \sigma_1^2) \) and \( X_2 \sim N(\mu_2, \sigma^2_2) \).
+
+Assume \( X^{(1)}, ..., X^{(N)} \) iid \( \sim f \). Then \( m_1 = \lambda \mu_1 + ( 1 - \lambda) \mu_2 \) and \( m_2 = \lambda (\mu_1^2 + \sigma_1^2) + (1 - \lambda)(\mu_2^2 + \sigma_2^2) \), \( m_3 = \lambda(\mu_1^3 + 3 \mu_1 \sigma_1^2)  + ...\), \( m_4 = \lambda(\mu_1^4 + 6 \mu_1^2 \sigma_1^2 + 3 \sigma_1^4) + (1 - \lambda)... \) and \( m_5 = \lambda(\mu_1^5 + 10 \mu_1^3 \sigma_1^2 + 15 \mu_1 \sigma_1^4) + (1- \lambda) \).
+
+Solve system for \( \lambda, \mu_1, \mu_2, \sigma_1^2, \sigma_2^2 \) and \( \hat m_1 = m_1, ..., \hat m_5 = m_5 \). Reduces to monis polynomial in \( p = \mu_1 \mu_2 \).
+
+\begin{eg}
+  Assume \( X^{(1)}, ..., X^{(N)} \sim \mathrm{Unif}(-\theta, \theta)\)  with \( \theta > 0 \). What is \( \hat \theta_{MOM} \)? So \( \bar x_\mu = \hat \mu_1 = \mu_1(\theta) = 0 \). This does not work.
+
+  \( \hat \theta_{MOM} = \sqrt{3 \hat \mu_2} \).
+\end{eg}
+
+\begin{eg}
+  \( (x^{(1)}, ..., x^{(5)}) = (0,2,-1,-1, 0)  \), \( \hat \mu_1 = 0 \) and \( \hat \mu_2 = \frac{1}{5} (0^2 + 2^2 + 1 + 1 + 0^2) = \frac{6}{5} \). So \( \hat \theta_{MOM}(x^{(1)}, ..., x^{(5)} = \sqrt{\frac{18}{5}}) \). THis is smaller than \( \sqrt{\frac{20}{5}} = 2 \). Not a good estimator.
+\end{eg}
+
+\subsection{Maximum likelihood estimation}
+
+We recall that \( \frac{\partial \mathbf x^T \mathbf A \mathbf x}{\partial \mathbf x} = \mathbf x^T (\mathbf A + \mathbf A^T) \), \( \frac{\partial \mathrm{tr}(\mathbf A \mathbf B)}{\partial \mathbf A} = \mathbf B^T \), and \( \frac{\partial \log(\det \mathbf A)}{\partial \mathbf A} = (\mathbf A^{-1})^T \).
+
+\begin{prop}[Multivariate normal model]\label{mle:multivariate-normal}
+  For a multivariate normal random vector, the maximum likelihood estimator of \( \mu \) and \( \Sigma \) are given by 
+  \begin{align*}
+    \hat \mu = \frac{1}{N} \sum_{i=1}^N X^{(i)}, \quad \text{and} \quad \hat \Sigma = \frac{1}{N}(X^{(i)} - \hat \mu)(X^{(i)} - \hat \mu)^T.
+  \end{align*}
+\end{prop}
+
+\begin{proof}
+  The log-likelihood function is given by 
+  \begin{align*}
+    \ell_{X}( \mu, \Sigma) = -\frac{1}{2} \sum_{i=1}^N \left( m\log(2\pi) +  \log(\mathrm{det}(\Sigma)) + (X^{(i)} - \mu)^T \Sigma^{-1} (X^{(i)} - \mu) \right).
+  \end{align*}
+  Write \( X^{(i)} - \bar X + \bar X - \mu \) for \( X^{(i)} - \mu \), and we see that the log-likelihood function becomes 
+  \begin{align*}
+    \ell_{X}(\mu, \Sigma) = -\frac{mN}{2}\log(2 \pi) - \frac{N}{2} \log\det(\Sigma) -\frac{N}{2} \mathrm{tr}(\Sigma^{-1}S) - \frac{N}{2} (\bar X - \mu)^T \Sigma^{-1} (\bar X - \mu).
+  \end{align*}
+  Using the derivative rules we see that 
+  \begin{align*}
+    \hat \mu = \bar X \quad \text{and} \quad \hat \Sigma = S = \frac{1}{N} \sum (X^{(i)} - \hat \mu)(X^{(i)} - \hat \mu)^T.
+  \end{align*}
+\end{proof}
+
+
+\clearpage
+\include{chapters/exp-families}
+
+\clearpage
+\include{chapters/likelihood-inference}
+
+\clearpage
+\include{chapters/fishers-exact-test}
+
+
+\clearpage
+\section{Review}
+
+\begin{itemize}
+  \item What is the saturation ideal?
+  \item What is the marginal density? 
+  \item What is the conditional density?
+  \item What is conditional independence?
+  \item Pearl's conditional independence axioms
+  \item What is the intersection axiom?
+  \item Rank criterion for independence
+  \item Algebraic criterion for conditional independence of discrete random vectors
+  \item Conditional independence ideal of discrete random vectors
+  \item Conditional independence model of discrete random vectors
+  \item Rank criterion for conditional independence of Gaussian random vectors
+  \item Algebraic criterion for conditional independence of Gaussian random vectors
+  \item Conditional independence ideal of Gaussian random vectors
+  \item Compute the conditional independence model of Gaussian random vectors for \( \mathcal{C} = \left\{ 1 \indep 3, 1 \indep 3 \mid 2 \right\} \). We should get \( 1 \indep \{2,3\} \) or \( 3 \indep \{1,2\} \).
+  \item Prove that \( (1 \indep 2 \mid 3) \) and \( (2 \indep 3) \) imply \( 2 \indep (1,3) \).
+  \item Prove the closure theorem
+  \item How to compute the \( j \)-th elimination ideal? Use the Elimination Theorem, see Theorem \ref{thm:elimination-theorem}.
+  \item How do you compute the closed image of a variety under a projection? What is \( \overline{\pi(V(I))} \)?
+  \item Implicitization of binomial model with two trials
+  \item Implicitization of general binomial model 
+  \item What is a statistical model?
+  \item What is a sufficient statistic?
+  \item Factorization theorem
+  \item Log likelihoo function of a multivariate normal distribution
+  \item Sufficient statistic of the likelihood function of a multivariate normal distribution
+  \item MLE of Gaussian model
+  \item Exponential family definition
+  \item Exponential form of binomial model
+  \item Exponential form of univariate normal model
+  \item Log-affine linear models
+  \item What is a toric ideal?
+  \item Toric ideals and binomial ideals
+  \item Sufficient statistic and natural parameter of Gaussian model
+  \item Inverse linear space
+  \item Gaussian linear concentration model
+  \item Concentration matrix and conditional independence
+  \item Assume concentration matrix \( K \) has elements \( k_{12} = k_{13} = 0 \). What does this mean? What is the ideal?
+  \item Maximum Likelihood degree definition
+  \item Log-likelihood function of a discrete model 
+  \item Score equations of a discrete model
+  \item Compute MLE for binomial model with \( r \) trials given samples \( X^{(1)}, ..., X^{(n)} \)
+  \item What is the ML degree of the twisted cube?
+  \item What is the ML degree of the binomial model with two trials?
+  \item What is the ML degree of the independence model?
+  \item What is the ML degree of the full Gaussian model?
+  \item What is the ML degree when covariance is ID matrix and mean is from a nodal cubic \( t^2 - 1,t(t^2 - 1) \)?
+  \item MLE of restricted covariance Gaussian model with centered / unrestricted mean
+  \item MLE of full independence Gaussian model and centered
+  \item Likelihood in projective space 
+  \item Likelihood degree of projective variety
+  \item Lagrange multipliers
+  \item Score equations with lagrange multipliers
+  \item Example: discrete with \( r = 3 \) and \( V = ( p_1^2 - 
+  4p_0p_2 ) \)
+  \item MLE of independence model 2x2
+  \item MLE of binomial model (2 trials)?
+  \item June Huh Theorem
+  \item June Huh applied on binomial model with two trials
+  \item June Huh and independence model
+  \item Birchs Theorem
+  \item When does the MLE exist for log affine linear models?
+  \item Define the Gaussian linear concentration model
+  \item MLE of Gaussian linear concentration model 
+  \item Gaussian graphical model
+  \item MLE of graphical model
+  \item Example: Compute the MLE of the Gaussian graphical model with \( 1 \indep 2 \mid 3 \)
+  \item Chi square statistic
+  \item Asymptotic \( p \)-value, how does it work?
+  \item Probability of observing a contingency table; what is the problem?
+  \item Definition of hypergeometric distribution
+  \item Conditional distribution of observing a contingency table for \( r=c=2 \) and general case
+  \item exact \( p \)-value
+  \item explicit formula of the \( p \)-value
+  \item Probability of observing a contingency table of a log-affine linear model
+  \item What is a fiber?
+  \item Conditional probability of observing a contingency table of a log-affine linear model + Independence Proof
+  \item Exact conditional \( p \)-value of a log-affine linear model
+  \item Markov basis
+  \item Fundamental theorem of Markov basis
+  \item Example: 2x2 independence model
+\end{itemize}
+
+\printindex
 
 \end{document}

@@ -1,0 +1,159 @@
+\section{Probability Primer}
+
+\emph{30.10.2023 | Lecture 5}
+
+The covariance matrix is \( \mathrm{Var}[\mathbb X] \in \mathbb R^{m \times m} \) with entries \( 
+  \mathrm{Cor}(X_i, X_j) \) for \( i,j \in \left\{ 1,...,m \right\} \). The key property is that the covariance matrix is a symmetri positive semidefinite matrix.
+
+\begin{defi}
+Correlation 
+\begin{align*}
+  \mathrm{Corr}[X,Y] = \frac{\mathrm{Cov}(X,Y)}{\sqrt{\mathrm{Var}[X]}\sqrt{\mathrm{Var}[Y]}}
+\end{align*}
+\end{defi}
+
+If \( X \) and \( Y \) are independent, then the correlation is zero.
+
+Cauchy-Schwarz:
+\begin{align*}
+  |\mathrm{Cov}(X,Y)| \leq \sqrt{\mathrm{Var}(X)}\sqrt{\mathrm{Var}(Y)}.
+\end{align*}
+
+\( \mathrm{Corr}[X,Y] \in [-1,1] \)
+
+\( \mathrm{Corr}[a_0 + a_1X, b_0 + b_1Y] = \mathrm{Corr}[X,Y] \) if \( a_1,b_1 > 0 \)
+
+Correlation matrix 
+\begin{align*}
+  \begin{bmatrix}
+    1 & ... & \mathrm{Corr}(X_1, X_m) \\
+    \vdots & \ddots & \vdots \\
+    \mathrm{Corr}(X_m, X_1) & ... & 1
+  \end{bmatrix}
+\end{align*}
+
+Recall Gaussian: \( f_{\mu, \sigma} = \frac{1}{\sqrt{2 \pi \sigma^2}}e^{-\frac{(x - \mu)^2}{2\sigma^2}} \)
+
+Multivariate Gaussian 
+\begin{align*}
+  f_{\mu, \sigma} = \frac{1}{\sqrt{(2 \pi)^m \det(\Sigma)}} e^{-\frac{1}{2} (x - \mu)^T \Sigma^{-1} (x - \mu)}
+\end{align*}
+with \( \mathbb E[X] = \mu \) and \( \mathrm{Var}[X] = \Sigma \). We write \( X \sim N_{m}(\mu, \Sigma) \).
+
+\begin{thm}
+Let \( X \sim N_{m}(\mu, \Sigma) \). Let \( I,J \subset [m] \) disjoint. 
+\begin{enumerate}
+  \item \( X_J \sim N(\mu_J, \Sigma_{JJ}) \)
+  \item The random variable \( X_U \mid X_j = x_j \sim N_{\#I}(\mu_I + \Sigma_{IJ}\Sigma_{JJ}^{-1}(x_J - \mu_J), \Sigma_{II} - \Sigma_{IJ}\Sigma_{JJ}^{-1}\Sigma_{JI}) \). Note that \(  \Sigma_{II} - \Sigma_{IJ}\Sigma_{JJ}^{-1}\Sigma_{JI} \) is called the Schur component.
+  \item If \( A \in \mathbb R^{k \times m} \) full rank, \( k \leq m \), \( b \in \mathbb{R}^k \), then \( AX + b \sim N(A \mu + b, A \Sigma A^{T}) \)
+\end{enumerate}
+\end{thm}
+
+\subsection{Covariance and covariance matrix}
+
+\begin{defi}[Covariance]
+  Let \( X,Y \) be random variables with finite second moments. The covariance is defined as 
+  \begin{align*}
+    \mathrm{cov}(X,Y) = \mathbb E[(X - \mathbb E[X])(Y - \mathbb E[Y])].
+  \end{align*}
+\end{defi}
+
+The covariance is also an indicator for the strength of a linear relationship between \( X \) and \( Y \).
+
+\begin{defi}[Correlation]
+  The correlation \( \rho \) between \( X \) and \( Y \) is defined as 
+  \begin{align*}
+    \rho_{X,Y} = \frac{\mathrm{cov(X,Y)}}{\sqrt{\mathrm{Var}(X)} \sqrt{\mathrm{Var}(Y)}}.
+  \end{align*}
+\end{defi}
+
+Let \( \mathbf X \) be a random vector. The covariance matrix is a square matrix giving the covariance between each pair of elements of \( \mathbf X \).
+
+\begin{prop}[Properties]
+  A covariance matrix is symmetric, positive semi-definite and its main diagonals contains variances. It is positive definite, if all the components of \( \mathbf X \) are linearly independent.
+\end{prop}
+
+\subsection{Normal distribution}
+
+\begin{mdframed}
+The \textbf{standard \emph{univariate} normal distribution} \( \mathcal{N}(0,1) \) has as a density function the \emph{Gaussian bell curve}
+\begin{align*}
+  \phi(x) = \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2}x^2}.
+\end{align*}
+In general, the \textbf{\emph{univariate} normal distribution} \( \mathcal{N}(\mu,\sigma) \) has as a density function
+\begin{align*}
+  \phi(x) = \frac{1}{\sqrt{2\pi} \sigma} e^{-\frac{1}{2\sigma^2}(x - \mu)^2}.
+\end{align*}
+\end{mdframed}
+
+Suppose \( \mathbf X = (X_1,...,X_m) \) is a random vector and each of its components \( X_1,...,X_k \) are independent and identically distributed as \( X_i \sim \mathcal{N}(0,1) \). Then, we say that \( \mathbf X \) is distributed according to a \textbf{standard \emph{multivariate} normal distribution} \( \mathcal{N}_m(\mathbf 0, \mathbf I_m) \); here \( \mathbf I_m \) is the \( m \times m \)-identity matrix. The density function is 
+\begin{align*}
+  \phi_{\mathbf 0, \mathbf I}(\mathbf x) 
+  = \prod^m_{i=1} \frac{1}{\sqrt{2 \pi}}e^{-\frac{1}{2}x_i^2}  
+  = \frac{1}{(2 \pi)^{\frac{m}{2}}} \cdot e^{-\frac{1}{2} \mathbf x^T \mathbf x}.
+\end{align*}
+Let \( \mu \in \mathbb R^m \) and \( \Lambda \in \mathbb R^{m \times m} \) be of full rank \( m \) (so it is invertible). Define a transformation \( \mathbf Y = \Lambda \mathbf X + \mu \). The new density function reads
+\begin{align*}
+  \phi_{\mathbf Y}(\mathbf y) = \frac{1}{(2 \pi)^{\frac{m}{2}}} e^{-\frac{1}{2}(\mathbf y - \mu)^T\Lambda^{-T}\Lambda^T(\mathbf y - \mu)} \cdot  \mathrm{det}(\Lambda^{-1})
+\end{align*}
+Define \( \Sigma = \Lambda \Lambda^T \); then \( \mathbf Y \) depends only on \( \mu \) and some positive definite matrix \( \Sigma \). We say \( \mathbf Y \) is a \textbf{multivariate normal random vector}. So, any multivariate normal random vector is a non-singular affine transformation of a standard multivariate normal random vector.
+\begin{mdframed}
+Let \( \Sigma \in \mathrm{PD}(m) \) be a positive definite matrix. The density function of the \textbf{\emph{multivariate} normal distribution} \( \mathcal{N}_m(\mu,\Sigma) \) is
+\begin{align*}
+  \phi_{\mu, \Sigma}(\mathbf y) = \frac{1}{(2 \pi)^{\frac{m}{2}} \sqrt{\det(\Sigma)}}e^{-\frac{1}{2}(\mathbf y - \mu)^T\Sigma^{-1}(\mathbf y- \mu)}.
+\end{align*}
+The expectation of \( \mathcal{N}_m(\mu, \Sigma) \) is \( \mu \) and the covariance matrix is \( \Sigma \).
+\end{mdframed}
+
+
+ 
+\begin{thm}[Marginal distribution is normal]
+  Let \(  B \subset [m] \), and \( \mathbf X \sim \mathcal{N}(\mu, \Sigma) \).
+  Then, the marginal distribution \( \mathbf X_B \) of \( \mathbf X \) over \( B \) is multivariate normal: 
+  \begin{align*}
+    \mathbf X_B \sim \mathcal{N}(\mu_B, \Sigma_{B,B}).
+  \end{align*}
+\end{thm}
+
+\begin{proof}
+  Define \( A = [m] \setminus B \).
+  We marginalize over \( x_A \) (that is integrating out \( x_A \)).
+  The covariance matrix can be partitioned into 
+  \begin{align*}
+    \Sigma = \begin{bmatrix}
+      \Sigma_{A,A} & \Sigma_{A,B} \\
+      \Sigma_{B, A} & \Sigma_{B,B}
+    \end{bmatrix}.
+  \end{align*}
+  Then, 
+  \begin{align*}
+    \Sigma^{-1} = \begin{bmatrix}
+      I & 0 \\
+      -\Sigma^{-1}_{B,B}\Sigma_{B,A} & I
+    \end{bmatrix}
+    \begin{bmatrix}
+       & 0 \\
+      -\Sigma^{-1}_{B,B}\Sigma_{B,A} & I
+    \end{bmatrix}
+    \begin{bmatrix}
+      I & 0 \\
+      -\Sigma^{-1}_{B,B}\Sigma_{B,A} & I
+    \end{bmatrix}
+  \end{align*}
+  ...
+\end{proof}
+
+\begin{thm}[Conditional distribution is normal]
+  Let \( A, B \subset [m] \) be disjoint. Fix some \( x_B \in \mathbb R^B \). The conditional distribution of \( X_A \) given \( X_B = x_B \) is the multivariate normal distribution 
+  \begin{align*}
+    \mathcal{N}({\mu_{A} + \Sigma_{A,B} \Sigma_{B,B}^{-1}(x_B - \mu_B)}, \Sigma_{A,A} - \Sigma_{A,B}\Sigma_{B,B}^{-1}\Sigma_{B,A}).
+  \end{align*}
+  The conditional covariance matrix \( \Sigma_{AA.B} \) is defined as \( \Sigma_{A,A} - \Sigma_{A,B}\Sigma_{B,B}^{-1}\Sigma_{B,A} \).
+\end{thm}
+
+Two random variables are uncorrelated if they are independent. The converse direction may not be true; however for normal distributed random variables it is true!
+
+\begin{prop}[Independence equals uncorrelation]
+  Fix a dimension \( m \in \mathbb N \).
+  Let \( \mathbf X \sim  \mathcal{N}_{m}(\mu,\Sigma) \). Let \( A, B \subset [m] \) be disjoint. Then, \( X_A \indep X_B \) if and only if \( \Sigma_{A,B} = \mathbf 0\).
+\end{prop}
